@@ -1,0 +1,36 @@
+:root{--bg:#0b0d10;--bg-elev:#111418;--border:#1b2026;--text:#e6e8eb;--muted:#98a2b3;--primary:#6ee7b7;--primary-600:#34d399;--danger:#ef4444}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+.container{max-width:1100px;margin:0 auto;padding:32px 16px}
+.header h1{margin:0 0 4px 0;font-weight:700;letter-spacing:.2px}
+.subtitle{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+@media (max-width:980px){.grid{grid-template-columns:1fr}}
+.card{background:var(--bg-elev);border:1px solid var(--border);border-radius:12px;padding:16px}
+.card-title{margin:0 0 12px 0;font-size:16px}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.two-col{grid-column:span 1}
+.vsl-group{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.field.inline{flex-direction:row;align-items:center;gap:10px}
+label{font-size:12px;color:var(--muted)}
+input,select{background:#0f1317;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;outline:none;transition:border-color .15s ease}
+input:focus,select:focus{border-color:var(--primary)}
+.preview{border:1px dashed var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:12px}
+.preview.invalid{border-color:rgba(239,68,68,.6)}
+.preview-text{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:14px;word-break:break-word}
+.preview-actions{display:flex;gap:8px}
+.btn{background:var(--primary);color:#0b0d10;border:none;border-radius:8px;padding:10px 12px;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.helper{margin-top:12px;color:var(--muted);font-size:14px}
+.footer{margin-top:24px;color:var(--muted)}
+.switch{position:relative;display:inline-block;width:42px;height:24px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#232a32;transition:.2s;border-radius:999px;border:1px solid var(--border)}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:2px;background:white;transition:.2s;border-radius:50%}
+input:checked + .slider{background:var(--primary-600)}
+input:checked + .slider:before{transform:translateX(18px)}
+.hint{color:var(--danger);margin:0}
+
+

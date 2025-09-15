@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gerenciador de Nomenclatura</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/style.css">
+  <meta name="color-scheme" content="light dark">
+</head>
+<body>
+  <div id="app" class="container">
+    <header class="header">
+      <h1>Gerenciador de Nomenclatura</h1>
+      <p class="subtitle">Padronize nomes de campanhas (Google/YouTube) com segurança e consistência.</p>
+    </header>
+
+    <main class="grid">
+      <section class="card">
+        <h2 class="card-title">Configuração</h2>
+        <form class="form" @submit.prevent>
+          <div class="field two-col">
+            <label for="siglaGestor">Sigla do Gestor</label>
+            <input id="siglaGestor" type="text" v-model.trim="form.siglaGestor" @input="enforceUpper('siglaGestor')" placeholder="LP, JB..." maxlength="6" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="rede">Rede</label>
+            <select id="rede" v-model="form.rede">
+              <option v-for="opt in redes" :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+          </div>
+
+          <div class="field two-col">
+            <label for="posicionamento">Posicionamento</label>
+            <select id="posicionamento" v-model="form.posicionamento">
+              <option v-for="opt in posicionamentos" :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+          </div>
+
+          <div class="field two-col">
+            <label for="oferta">Oferta (código)</label>
+            <input id="oferta" type="text" v-model.trim="form.oferta" @input="enforceUpper('oferta')" placeholder="BD04, BP02..." maxlength="8" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="nomeConta">Nome da Conta</label>
+            <input id="nomeConta" type="text" v-model.trim="form.nomeConta" @input="sanitizeFree('nomeConta')" placeholder="MOLHO, CONTA PRINCIPAL..." maxlength="40" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="presell">Presell (código)</label>
+            <input id="presell" type="text" v-model.trim="form.presell" @input="enforceUpper('presell')" placeholder="PS01, PREL03" maxlength="8" autocomplete="off">
+          </div>
+
+          <div class="field vsl-group">
+            <div>
+              <label for="vsl">VSL</label>
+              <input id="vsl" type="number" min="0" max="99" v-model.number="form.vsl" @input="padVsl('vsl')" placeholder="01">
+            </div>
+            <div>
+              <label for="ml">ML</label>
+              <input id="ml" type="number" min="0" max="99" v-model.number="form.ml" @input="padVsl('ml')" placeholder="01">
+            </div>
+            <div>
+              <label for="l">L</label>
+              <input id="l" type="number" min="0" max="99" v-model.number="form.l" @input="padVsl('l')" placeholder="01">
+            </div>
+          </div>
+
+          <div class="field inline">
+            <label class="switch">
+              <input type="checkbox" v-model="showBrackets">
+              <span class="slider"></span>
+            </label>
+            <span>Exibir tokens com colchetes [ ]</span>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Pré-visualização</h2>
+        <div class="preview" :class="{ invalid: !isValid }">
+          <code class="preview-text">{{ preview }}</code>
+          <div class="preview-actions">
+            <button class="btn" :disabled="!isValid" @click="copyToClipboard">Copiar</button>
+          </div>
+          <p v-if="!isValid" class="hint">Preencha os campos obrigatórios e remova caracteres proibidos.</p>
+        </div>
+
+        <div class="helper">
+          <h3>Template ({{ form.rede }})</h3>
+          <p>Separador: <strong>-</strong></p>
+          <p>Formato: <strong>[SiglaGestor] - [Rede] - [Posicionamento] - [Oferta] - [NomeDaConta] - [Presell] - [VersaoVSL]</strong></p>
+          <p>Exemplo: <em>LP - Google - YT - BD04 - MOLHO - PS01 - VSL01.ML01.L01</em></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <details>
+        <summary>Manual rápido de uso</summary>
+        <ol>
+          <li>Selecione a <strong>Rede</strong> e o <strong>Posicionamento</strong>.</li>
+          <li>Preencha códigos em <strong>MAIÚSCULAS</strong> (ex.: BD04, PS01).</li>
+          <li>Evite caracteres proibidos: <code>| ; : / \ [ ] { }</code>.</li>
+          <li>Use os campos VSL/ML/L para formar <code>VSL01.ML01.L01</code>.</li>
+          <li>Ative o toggle para mostrar tokens com <strong>[colchetes]</strong> se desejar.</li>
+        </ol>
+      </details>
+    </footer>
+  </div>
+
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <script src="assets/app.js"></script>
+</body>
+</html>
+
+
