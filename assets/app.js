@@ -8,7 +8,7 @@ createApp({
     return {
       redes: ["Google", "YouTube"],
       posicionamentos: ["YT", "GS", "DS", "PMAX"],
-      showBrackets: false,
+      showBrackets: true,
       form: {
         siglaGestor: "",
         rede: "Google",
