@@ -48,7 +48,7 @@ createApp({
         withToken("Rede", (this.form.rede || "").toUpperCase()),
         withToken("Posicionamento", this.form.posicionamento || ""),
         withToken("Oferta", this.form.oferta || ""),
-        withToken("NomeDaConta", this.form.nomeConta || ""),
+        withToken("NomeDaConta", (this.form.nomeConta || "").toUpperCase()),
         withToken("Presell", this.form.presell || ""),
         withToken("VersaoVSL", this.versionVSL),
       ];
@@ -70,7 +70,8 @@ createApp({
       // Remove todos os espaços e caracteres proibidos
       const sanitized = current
         .replace(/\s+/g, "")
-        .replace(PROHIBITED_REGEX, "");
+        .replace(PROHIBITED_REGEX, "")
+        .toUpperCase();
       this.form[field] = sanitized;
     },
     padVsl(field) {
