@@ -11,10 +11,12 @@
   <meta name="color-scheme" content="light dark">
 </head>
 <body>
+  <div id="pageRoot">
   <div id="app" class="container">
     <header class="header">
-      <h1>Gerenciador de Nomenclatura</h1>
-      <p class="subtitle">Padronize nomes de campanhas (Google/YouTube) com segurança e consistência.</p>
+      <img src="assets/logo.png" alt="Logo do sistema" style="display:block;margin:0 auto;max-height:80px;width:auto;"/>
+ 
+      <p  class="subtitle">Padronize nomes de campanhas (Google/YouTube) com segurança e consistência.</p>
     </header>
 
     <main class="grid">
@@ -94,7 +96,7 @@
           <h3>Template ({{ form.rede }})</h3>
           <p>Separador: <strong>-</strong></p>
           <p>Formato: <strong>[SiglaGestor] - [Rede] - [Posicionamento] - [Oferta] - [NomeDaConta] - [Presell] - [VersaoVSL]</strong></p>
-          <p>Exemplo: <em>LP - Google - YT - BD04 - MOLHO - PS01 - VSL01.ML01.L01</em></p>
+          <p>Exemplo: <em>LP - Google - YT - BD04 - CONTA01 - PS01 - VSL01.ML01.L01</em></p>
         </div>
       </section>
     </main>
@@ -115,6 +117,8 @@
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <script src="assets/app.js"></script>
+  <footer class="site-footer">Um Software 100% Nitro 🚀 · <a href="mailto:bruno@nitrocompany.co?subject=Du%C3%ADvidas%20ou%20Sugest%C3%B5es">para dúvidas ou sugestões</a></footer>
+  </div>
 </body>
 </html>
 

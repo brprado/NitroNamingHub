@@ -45,7 +45,7 @@ createApp({
 
       const parts = [
         withToken("SiglaGestor", this.form.siglaGestor || ""),
-        withToken("Rede", this.form.rede || ""),
+        withToken("Rede", (this.form.rede || "").toUpperCase()),
         withToken("Posicionamento", this.form.posicionamento || ""),
         withToken("Oferta", this.form.oferta || ""),
         withToken("NomeDaConta", this.form.nomeConta || ""),
@@ -93,3 +93,38 @@ createApp({
 }).mount('#app');
 
 
+// Ajuste responsivo para caber 100% na viewport sem scroll
+(function() {
+  function resizeToFit() {
+    const container = document.querySelector('.container');
+    const footer = document.querySelector('.site-footer');
+    if (!container) return;
+
+    // Reset scale antes de medir
+    container.style.transform = 'scale(1)';
+
+    const viewportHeight = window.innerHeight;
+    const viewportWidth = window.innerWidth;
+
+    // Altura ocupada pelo conteúdo + footer (se existir)
+    const containerRect = container.getBoundingClientRect();
+    const footerRect = footer ? footer.getBoundingClientRect() : { height: 0 };
+    const totalHeight = containerRect.height + (footerRect.height || 0);
+
+    const heightScale = viewportHeight / totalHeight;
+    const widthScale = viewportWidth / containerRect.width;
+
+    // Usar o menor scale para garantir que nada extrapole
+    const scale = Math.min(1, heightScale, widthScale);
+
+    container.style.transform = `scale(${scale})`;
+    // Garantir que o footer permaneça visível dentro da viewport
+    if (footer) {
+      footer.style.transform = `scale(${scale})`;
+      footer.style.transformOrigin = 'top center';
+    }
+  }
+
+  window.addEventListener('load', resizeToFit);
+  window.addEventListener('resize', resizeToFit);
+})();
