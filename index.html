@@ -20,7 +20,12 @@
       <p  class="subtitle">Padronize nomes de campanhas (Google/YouTube) com segurança e consistência.</p>
     </header>
 
-    <main class="grid">
+    <nav class="tabs">
+      <button :class="{ active: activeTab==='campanhas' }" @click="activeTab='campanhas'">Campanhas</button>
+      <button :class="{ active: activeTab==='anuncios' }" @click="activeTab='anuncios'">Anúncios</button>
+    </nav>
+
+    <main class="grid" v-if="activeTab==='campanhas'">
       <section class="card">
         <h2 class="card-title">Configuração</h2>
         <form class="form" @submit.prevent>
@@ -98,6 +103,67 @@
           <p>Separador: <strong>-</strong></p>
           <p>Formato: <strong>[SiglaGestor] - [Rede] - [Posicionamento] - [Oferta] - [NomeDaConta] - [Presell] - [VersaoVSL]</strong></p>
           <p>Exemplo: <em>LP - Google - YT - BD04 - CONTA01 - PS01 - VSL01.ML01.L01</em></p>
+        </div>
+      </section>
+    </main>
+
+    <main class="grid" v-if="activeTab==='anuncios'">
+      <section class="card">
+        <h2 class="card-title">Configuração de Anúncio</h2>
+        <form class="form" @submit.prevent>
+          <div class="field two-col">
+            <label for="copy">Copy</label>
+            <input id="copy" type="text" v-model.trim="formAds.copy" @input="enforceUpperAds('copy')" placeholder="MG, H1..." maxlength="20" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="redeTrafego">Rede de Tráfego</label>
+            <select id="redeTrafego" v-model="formAds.redeTrafego">
+              <option v-for="opt in redeTrafegoOpts" :key="opt.value" :value="opt.value">{{ opt.label }} - {{ opt.value }}</option>
+            </select>
+          </div>
+
+          <div class="field two-col">
+            <label for="ofertaAd">Oferta</label>
+            <input id="ofertaAd" type="text" v-model.trim="formAds.oferta" @input="enforceUpperAds('oferta')" placeholder="BP02..." maxlength="12" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="adNum">AD</label>
+            <input id="adNum" type="number" min="0" max="99" v-model.number="formAds.adNum" @input="padAd('adNum')" placeholder="12">
+          </div>
+
+          <div class="field two-col">
+            <label for="editor">Editor (opcional)</label>
+            <input id="editor" type="text" v-model.trim="formAds.editor" @input="enforceUpperAds('editor')" placeholder="MB, LP..." maxlength="12" autocomplete="off">
+          </div>
+
+          <div class="field inline">
+            <label class="switch">
+              <input type="checkbox" v-model="showBrackets">
+              <span class="slider"></span>
+            </label>
+            <span>Aplicar Colchetes []</span>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Pré-visualização</h2>
+        <div class="preview" :class="{ invalid: !isValidAds }">
+          <code class="preview-text">{{ previewAds }}</code>
+          <div class="preview-actions">
+            <button class="btn" :disabled="!isValidAds" @click="copyAds">Copiar</button>
+          </div>
+          <p v-if="!isValidAds" class="hint">Preencha os campos obrigatórios e remova caracteres proibidos.</p>
+        </div>
+
+        <div class="helper">
+          <h3>Template de Anúncio</h3>
+          <p>Base: <strong>[Copy][Rede de Tráfego][Oferta][AD]</strong></p>
+          <p>Exemplo: <em>[MG][FB][BP02][AD12]</em></p>
+          <p style="margin-top:8px">Sugestão com editor: <strong>[Copy] - [Rede de tráfego] - [Oferta] - [AD] - [Editor]</strong></p>
+          <p>Exemplo: <em>[MG] - [FB] - [BP02] - [AD12] - [MB]</em></p>
         </div>
       </section>
     </main>

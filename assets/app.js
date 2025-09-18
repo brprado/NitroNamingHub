@@ -6,8 +6,14 @@ const PROHIBITED_TEST = /[|;:\/\\\[\]{}]/; // versão sem flag global (para test
 createApp({
   data() {
     return {
-      redes: ["Google", "YouTube"],
+      activeTab: 'campanhas',
+      redes: ["Google", "YouTube", "Facebook"],
       posicionamentos: ["YT", "GS", "DS", "PMAX"],
+      redeTrafegoOpts: [
+        { label: 'Facebook', value: 'FB' },
+        { label: 'YouTube', value: 'YT' },
+        { label: 'Taboola', value: 'TB' },
+      ],
       showBrackets: true,
       form: {
         siglaGestor: "",
@@ -19,6 +25,13 @@ createApp({
         vsl: 1,
         ml: 1,
         l: 1,
+      },
+      formAds: {
+        copy: "",
+        redeTrafego: "FB",
+        oferta: "",
+        adNum: 0,
+        editor: "",
       },
       copied: false,
     };
@@ -55,6 +68,33 @@ createApp({
 
       return parts.join(sep);
     },
+    isValidAds() {
+      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
+      const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.editor}`;
+      const noProhibited = !PROHIBITED_TEST.test(combined);
+      const adOk = Number.isInteger(Number(this.formAds.adNum)) && Number(this.formAds.adNum) >= 0 && Number(this.formAds.adNum) <= 99;
+      return Boolean(requiredFilled && noProhibited && adOk);
+    },
+    previewAds() {
+      const p2 = (n) => String(n ?? 0).padStart(2, "0");
+      const adToken = `AD${p2(this.formAds.adNum)}`;
+      const withToken = (value) => {
+        const val = value ?? "";
+        return this.showBrackets ? (val ? `[${val}]` : "") : val;
+      };
+      const parts = [
+        withToken((this.formAds.copy || "").toUpperCase()),
+        withToken((this.formAds.redeTrafego || "").toUpperCase()),
+        withToken((this.formAds.oferta || "").toUpperCase()),
+        withToken(adToken),
+      ];
+      const base = parts.join(" - ");
+      const editor = (this.formAds.editor || "").toUpperCase();
+      if (editor) {
+        return this.showBrackets ? `${base} - [${editor}]` : `${base} - ${editor}`;
+      }
+      return base;
+    },
   },
   methods: {
     enforceUpper(field) {
@@ -80,6 +120,20 @@ createApp({
       value = Math.max(0, Math.min(99, Math.trunc(value)));
       this.form[field] = value;
     },
+    enforceUpperAds(field) {
+      const current = this.formAds[field] ?? "";
+      const sanitized = String(current)
+        .replace(/\s+/g, "")
+        .replace(PROHIBITED_REGEX, "")
+        .toUpperCase();
+      this.formAds[field] = sanitized;
+    },
+    padAd(field) {
+      let value = Number(this.formAds[field] ?? 0);
+      if (Number.isNaN(value)) value = 0;
+      value = Math.max(0, Math.min(99, Math.trunc(value)));
+      this.formAds[field] = value;
+    },
     async copyToClipboard() {
       try {
         await navigator.clipboard.writeText(this.preview);
@@ -90,6 +144,16 @@ createApp({
         alert("Não foi possível copiar para a área de transferência.");
       }
     },
+    async copyAds() {
+      try {
+        await navigator.clipboard.writeText(this.previewAds);
+        this.copied = true;
+        setTimeout(() => (this.copied = false), 1500);
+      } catch (e) {
+        console.error(e);
+        alert("Não foi possível copiar para a área de transferência.");
+      }
+    }
   },
 }).mount('#app');
 
