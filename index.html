@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gerenciador de Nomenclatura</title>
+  <title>NitroCampaign</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -44,8 +44,31 @@
           <div class="field two-col">
             <label for="posicionamento">Posicionamento</label>
             <select id="posicionamento" v-model="form.posicionamento">
-              <option v-for="opt in posicionamentos" :key="opt" :value="opt">{{ opt }}</option>
+              <option v-for="opt in posicionamentosOptions" :key="opt" :value="opt">{{ opt }}</option>
             </select>
+          </div>
+
+          <div class="field two-col">
+            <label for="pais">País</label>
+            <select id="pais" v-model="form.pais">
+              <option value="USA">USA</option>
+              <option value="BR">BR</option>
+            </select>
+          </div>
+
+          <div class="field two-col">
+            <label for="estrutura">Estrutura</label>
+            <input id="estrutura" type="text" v-model.trim="form.estrutura" @input="enforceUpperKeepSpaces('estrutura')" placeholder="1-1-1" maxlength="12" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="levaAd">Leva do AD</label>
+            <input id="levaAd" type="text" v-model.trim="form.levaAd" @input="enforceUpperKeepSpaces('levaAd')" placeholder="LEVA 01" maxlength="12" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="dataDiaUm">Data do dia 1</label>
+            <input id="dataDiaUm" type="date" v-model="form.dataDiaUmRaw" autocomplete="off">
           </div>
 
           <div class="field two-col">
@@ -53,9 +76,26 @@
             <input id="oferta" type="text" v-model.trim="form.oferta" @input="enforceUpper('oferta')" placeholder="BD04, BP02..." maxlength="8" autocomplete="off">
           </div>
 
-          <div class="field">
-            <label for="nomeConta">Nome da Conta</label>
-            <input id="nomeConta" type="text" v-model.trim="form.nomeConta" @input="sanitizeFree('nomeConta')" placeholder="MOLHO, CONTA PRINCIPAL..." maxlength="40" autocomplete="off">
+          <div class="field two-col">
+            <label for="bm">BM</label>
+            <input id="bm" type="text" v-model.trim="form.bm" @input="enforceUpperKeepSpaces('bm')" placeholder="DIDA" maxlength="20" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="ca">CA</label>
+            <input id="ca" type="text" v-model.trim="form.ca" @input="enforceUpperKeepSpaces('ca')" placeholder="CA01" maxlength="10" autocomplete="off">
+          </div>
+
+          
+
+          <div class="field two-col">
+            <label for="nomeCampanha">Nome da Campanha</label>
+            <input id="nomeCampanha" type="text" v-model.trim="form.nomeCampanha" @input="enforceUpperKeepSpaces('nomeCampanha')" placeholder="ASHE 01" maxlength="30" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="adNumCampaign">AD</label>
+            <input id="adNumCampaign" type="number" min="0" max="99" v-model.number="form.adNumCampaign" @input="padVsl('adNumCampaign')" placeholder="12">
           </div>
 
           <div class="field two-col">
@@ -94,15 +134,16 @@
           <code class="preview-text">{{ preview }}</code>
           <div class="preview-actions">
             <button class="btn" :disabled="!isValid" @click="copyToClipboard">Copiar</button>
+            <span v-if="copied" style="color:#22c55e;font-weight:600">✅ Copiado</span>
           </div>
           <p v-if="!isValid" class="hint">Preencha os campos obrigatórios e remova caracteres proibidos.</p>
         </div>
 
         <div class="helper">
-          <h3>Template ({{ form.rede }})</h3>
+          <h3>Template (NitroCampaign)</h3>
           <p>Separador: <strong>-</strong></p>
-          <p>Formato: <strong>[SiglaGestor] - [Rede] - [Posicionamento] - [Oferta] - [NomeDaConta] - [Presell] - [VersaoVSL]</strong></p>
-          <p>Exemplo: <em>LP - Google - YT - BD04 - CONTA01 - PS01 - VSL01.ML01.L01</em></p>
+          <p>Formato: <strong>[GESTOR] - [REDE DE TRÁFEGO] - [BM] - [CA] - [OFERTA] - [PAÍS] - [AD] - [LEVA DO AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]</strong></p>
+          <p>Exemplo: <em>[RL] - [FB] - [DIDA - CA01] - [BP03] - [USA] - [AD12] - [LEVA 01] - [1-1-1] - [ASHE 01] - [17/09]</em></p>
         </div>
       </section>
     </main>
@@ -154,6 +195,7 @@
           <code class="preview-text">{{ previewAds }}</code>
           <div class="preview-actions">
             <button class="btn" :disabled="!isValidAds" @click="copyAds">Copiar</button>
+            <span v-if="copied" style="color:#22c55e;font-weight:600">✅ Copiado</span>
           </div>
           <p v-if="!isValidAds" class="hint">Preencha os campos obrigatórios e remova caracteres proibidos.</p>
         </div>
@@ -184,7 +226,8 @@
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
   <script src="assets/app.js"></script>
-  <footer class="site-footer">Um Software 100% Nitro 🚀 · <a href="mailto:bruno@nitrocompany.co?subject=Du%C3%ADvidas%20ou%20Sugest%C3%B5es">para dúvidas ou sugestões</a></footer>
+  <footer class="site-footer">Um Software 100% Nitro 🚀 · <a href="https://forms.gle/tzZkx8BtZ4L64FrEA
+    ">para dúvidas ou sugestões</a></footer>
   </div>
 </body>
 </html>

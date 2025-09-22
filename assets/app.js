@@ -20,11 +20,19 @@ createApp({
         rede: "Google",
         posicionamento: "YT",
         oferta: "",
-        nomeConta: "",
         presell: "",
         vsl: 1,
         ml: 1,
         l: 1,
+        pais: "USA",
+        estrutura: "",
+        levaAd: "",
+        dataDiaUm: "",
+        dataDiaUmRaw: "",
+        bm: "",
+        ca: "",
+        nomeCampanha: "",
+        adNumCampaign: 0,
       },
       formAds: {
         copy: "",
@@ -38,35 +46,53 @@ createApp({
   },
   computed: {
     isValid() {
-      const requiredFilled = this.form.siglaGestor && this.form.rede && this.form.posicionamento && this.form.oferta && this.form.nomeConta && this.form.presell;
-      const combined = `${this.form.siglaGestor}${this.form.oferta}${this.form.nomeConta}${this.form.presell}`;
+      const requiredFilled = this.form.siglaGestor && this.form.rede && this.form.oferta && this.form.pais && this.form.bm && this.form.ca && this.form.nomeCampanha;
+      const combined = `${this.form.siglaGestor}${this.form.oferta}${this.form.pais}${this.form.bm}${this.form.ca}${this.form.nomeCampanha}`;
       const noProhibited = !PROHIBITED_TEST.test(combined);
-      const numbersOk = [this.form.vsl, this.form.ml, this.form.l].every((n) => Number.isInteger(Number(n)) && Number(n) >= 0 && Number(n) <= 99);
-      return Boolean(requiredFilled && noProhibited && numbersOk);
+      const adOk = Number.isInteger(Number(this.form.adNumCampaign)) && Number(this.form.adNumCampaign) >= 0 && Number(this.form.adNumCampaign) <= 99;
+      return Boolean(requiredFilled && noProhibited && adOk);
     },
     versionVSL() {
       const p2 = (n) => String(n ?? 0).padStart(2, "0");
       return `VSL${p2(this.form.vsl)}.ML${p2(this.form.ml)}.L${p2(this.form.l)}`;
     },
+    // Preview Campanhas conforme especificação
     preview() {
       const sep = " - ";
-      // Mantém os valores do usuário; quando o toggle está ativo, apenas envolve os valores com colchetes
-      const withToken = (label, value) => {
+      const p2 = (n) => String(n ?? 0).padStart(2, "0");
+      const adToken = `AD${p2(this.form.adNumCampaign)}`;
+      const withToken = (value) => {
         const val = value ?? "";
         return this.showBrackets ? (val ? `[${val}]` : "") : val;
       };
-
+      const formatDate = (iso) => {
+        if (!iso) return "";
+        const [y,m,d] = iso.split('-');
+        if (!y || !m || !d) return "";
+        return `${d}.${m}.${y}`;
+      };
       const parts = [
-        withToken("SiglaGestor", this.form.siglaGestor || ""),
-        withToken("Rede", (this.form.rede || "").toUpperCase()),
-        withToken("Posicionamento", this.form.posicionamento || ""),
-        withToken("Oferta", this.form.oferta || ""),
-        withToken("NomeDaConta", (this.form.nomeConta || "").toUpperCase()),
-        withToken("Presell", this.form.presell || ""),
-        withToken("VersaoVSL", this.versionVSL),
+        withToken((this.form.siglaGestor || "").toUpperCase()), // [GESTOR]
+        withToken((this.form.rede || "").toUpperCase()),         // [REDE DE TRÁFEGO]
+        withToken((this.form.bm || "").toUpperCase()),           // [BM]
+        withToken((this.form.ca || "").toUpperCase()),           // [CA]
+        withToken((this.form.oferta || "").toUpperCase()),       // [OFERTA]
+        withToken((this.form.pais || "").toUpperCase()),         // [PAÍS]
+        withToken(adToken),                                        // [AD]
+        withToken((this.form.levaAd || "").toUpperCase()),       // [LEVA DO AD]
+        withToken((this.form.estrutura || "").toUpperCase()),    // [ESTRUTURA]
+        withToken((this.form.nomeCampanha || "").toUpperCase()), // [NOME DA CAMPANHA]
+        withToken(formatDate(this.form.dataDiaUmRaw)),             // [DATA DO DIA 1]
       ];
 
       return parts.join(sep);
+    },
+    posicionamentosOptions() {
+      if (this.form.rede === 'Facebook') {
+        return ['Feed', 'Story', 'Reels', 'Audience Network'];
+      }
+      // Padrão para Google/YouTube mantém opções existentes
+      return this.posicionamentos;
     },
     isValidAds() {
       const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
@@ -101,6 +127,13 @@ createApp({
       const current = this.form[field] ?? "";
       const sanitized = current
         .replace(/\s+/g, "") // remove todos os espaços
+        .replace(PROHIBITED_REGEX, "")
+        .toUpperCase();
+      this.form[field] = sanitized;
+    },
+    enforceUpperKeepSpaces(field) {
+      const current = this.form[field] ?? "";
+      const sanitized = String(current)
         .replace(PROHIBITED_REGEX, "")
         .toUpperCase();
       this.form[field] = sanitized;
@@ -155,6 +188,14 @@ createApp({
       }
     }
   },
+  watch: {
+    'form.rede'(val) {
+      const opts = this.posicionamentosOptions;
+      if (!opts.includes(this.form.posicionamento)) {
+        this.form.posicionamento = opts[0] || '';
+      }
+    }
+  }
 }).mount('#app');
 
 
@@ -183,11 +224,7 @@ createApp({
     const scale = Math.min(1, heightScale, widthScale);
 
     container.style.transform = `scale(${scale})`;
-    // Garantir que o footer permaneça visível dentro da viewport
-    if (footer) {
-      footer.style.transform = `scale(${scale})`;
-      footer.style.transformOrigin = 'top center';
-    }
+    // Não escalonar o footer fixo
   }
 
   window.addEventListener('load', resizeToFit);
