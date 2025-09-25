@@ -7,12 +7,11 @@ createApp({
   data() {
     return {
       activeTab: 'campanhas',
-      redes: ["Google", "YouTube", "Facebook"],
-      posicionamentos: ["YT", "GS", "DS", "PMAX"],
+      redes: ["Google", "Facebook"],
+      posicionamentos: ["YT", "Display", "Search"],
       redeTrafegoOpts: [
         { label: 'Facebook', value: 'FB' },
-        { label: 'YouTube', value: 'YT' },
-        { label: 'Taboola', value: 'TB' },
+        { label: 'Google', value: 'Google' },
       ],
       showBrackets: true,
       form: {
@@ -20,13 +19,8 @@ createApp({
         rede: "Google",
         posicionamento: "YT",
         oferta: "",
-        presell: "",
-        vsl: 1,
-        ml: 1,
-        l: 1,
         pais: "USA",
         estrutura: "",
-        levaAd: "",
         dataDiaUm: "",
         dataDiaUmRaw: "",
         bm: "",
@@ -46,15 +40,23 @@ createApp({
   },
   computed: {
     isValid() {
-      const requiredFilled = this.form.siglaGestor && this.form.rede && this.form.oferta && this.form.pais && this.form.bm && this.form.ca && this.form.nomeCampanha;
-      const combined = `${this.form.siglaGestor}${this.form.oferta}${this.form.pais}${this.form.bm}${this.form.ca}${this.form.nomeCampanha}`;
+      // Validação baseada na rede selecionada
+      let requiredFilled;
+      let combined;
+      
+      if (this.form.rede === 'Facebook') {
+        // Facebook: BM é obrigatório, posicionamento não
+        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.bm && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha;
+        combined = `${this.form.siglaGestor}${this.form.bm}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
+      } else {
+        // Google: Posicionamento é obrigatório, BM não
+        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.posicionamento && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha;
+        combined = `${this.form.siglaGestor}${this.form.posicionamento}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
+      }
+      
       const noProhibited = !PROHIBITED_TEST.test(combined);
       const adOk = Number.isInteger(Number(this.form.adNumCampaign)) && Number(this.form.adNumCampaign) >= 0 && Number(this.form.adNumCampaign) <= 99;
       return Boolean(requiredFilled && noProhibited && adOk);
-    },
-    versionVSL() {
-      const p2 = (n) => String(n ?? 0).padStart(2, "0");
-      return `VSL${p2(this.form.vsl)}.ML${p2(this.form.ml)}.L${p2(this.form.l)}`;
     },
     // Preview Campanhas conforme especificação
     preview() {
@@ -69,33 +71,52 @@ createApp({
         if (!iso) return "";
         const [y,m,d] = iso.split('-');
         if (!y || !m || !d) return "";
-        return `${d}.${m}.${y}`;
+        return `${d}/${m}/${y}`;
       };
-      const parts = [
-        withToken((this.form.siglaGestor || "").toUpperCase()), // [GESTOR]
-        withToken((this.form.rede || "").toUpperCase()),         // [REDE DE TRÁFEGO]
-        withToken((this.form.bm || "").toUpperCase()),           // [BM]
-        withToken((this.form.ca || "").toUpperCase()),           // [CA]
-        withToken((this.form.oferta || "").toUpperCase()),       // [OFERTA]
-        withToken((this.form.pais || "").toUpperCase()),         // [PAÍS]
-        withToken(adToken),                                        // [AD]
-        withToken((this.form.levaAd || "").toUpperCase()),       // [LEVA DO AD]
-        withToken((this.form.estrutura || "").toUpperCase()),    // [ESTRUTURA]
-        withToken((this.form.nomeCampanha || "").toUpperCase()), // [NOME DA CAMPANHA]
-        withToken(formatDate(this.form.dataDiaUmRaw)),             // [DATA DO DIA 1]
-      ];
-
-      return parts.join(sep);
+      
+      // Determina o formato baseado na rede
+      if (this.form.rede === 'Facebook') {
+        // Padrão Facebook: [GESTOR] - [REDE DE TRÁFEGO] - [BM] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]
+        const parts = [
+          withToken((this.form.siglaGestor || "").toUpperCase()), // [GESTOR]
+          withToken("FB"),                                         // [REDE DE TRÁFEGO] - sempre FB para Facebook
+          withToken((this.form.bm || "").toUpperCase()),           // [BM]
+          withToken((this.form.ca || "").toUpperCase()),           // [CA]
+          withToken((this.form.oferta || "").toUpperCase()),       // [OFERTA]
+          withToken((this.form.pais || "").toUpperCase()),         // [PAÍS]
+          withToken(adToken),                                      // [AD]
+          withToken((this.form.estrutura || "").toUpperCase()),    // [ESTRUTURA]
+          withToken((this.form.nomeCampanha || "").toUpperCase()), // [NOME DA CAMPANHA]
+          withToken(formatDate(this.form.dataDiaUmRaw)),           // [DATA DO DIA 1]
+        ];
+        return parts.join(sep);
+      } else {
+        // Padrão Google: [GESTOR] - [REDE DE TRÁFEGO] - [POSICIONAMENTO] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]
+        const parts = [
+          withToken((this.form.siglaGestor || "").toUpperCase()), // [GESTOR]
+          withToken("Google"),                                     // [REDE DE TRÁFEGO] - sempre Google
+          withToken((this.form.posicionamento || "").toUpperCase()), // [POSICIONAMENTO]
+          withToken((this.form.ca || "").toUpperCase()),           // [CA]
+          withToken((this.form.oferta || "").toUpperCase()),       // [OFERTA]
+          withToken((this.form.pais || "").toUpperCase()),         // [PAÍS]
+          withToken(adToken),                                      // [AD]
+          withToken((this.form.estrutura || "").toUpperCase()),    // [ESTRUTURA]
+          withToken((this.form.nomeCampanha || "").toUpperCase()), // [NOME DA CAMPANHA]
+          withToken(formatDate(this.form.dataDiaUmRaw)),           // [DATA DO DIA 1]
+        ];
+        return parts.join(sep);
+      }
     },
     posicionamentosOptions() {
       if (this.form.rede === 'Facebook') {
-        return ['Feed', 'Story', 'Reels', 'Audience Network'];
+        // Facebook não tem posicionamento, retorna array vazio
+        return [];
       }
-      // Padrão para Google/YouTube mantém opções existentes
+      // Google tem posicionamento: YT, Display, Search
       return this.posicionamentos;
     },
     isValidAds() {
-      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
+      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.editor && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
       const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.editor}`;
       const noProhibited = !PROHIBITED_TEST.test(combined);
       const adOk = Number.isInteger(Number(this.formAds.adNum)) && Number(this.formAds.adNum) >= 0 && Number(this.formAds.adNum) <= 99;
@@ -147,7 +168,7 @@ createApp({
         .toUpperCase();
       this.form[field] = sanitized;
     },
-    padVsl(field) {
+    padNumber(field) {
       let value = Number(this.form[field] ?? 0);
       if (Number.isNaN(value)) value = 0;
       value = Math.max(0, Math.min(99, Math.trunc(value)));
@@ -186,13 +207,50 @@ createApp({
         console.error(e);
         alert("Não foi possível copiar para a área de transferência.");
       }
+    },
+    toggleTooltip(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      
+      // Remove active de todos os tooltips
+      document.querySelectorAll('.field-with-tooltip.active').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // Adiciona active apenas no tooltip clicado
+      const tooltipElement = event.target.closest('.field-with-tooltip');
+      if (tooltipElement) {
+        tooltipElement.classList.add('active');
+      }
+    },
+    hideAllTooltips() {
+      // Remove active de todos os tooltips
+      document.querySelectorAll('.field-with-tooltip.active').forEach(el => {
+        el.classList.remove('active');
+      });
     }
+  },
+  mounted() {
+    // Adiciona event listener para cliques fora dos tooltips
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('.field-with-tooltip')) {
+        this.hideAllTooltips();
+      }
+    });
   },
   watch: {
     'form.rede'(val) {
       const opts = this.posicionamentosOptions;
       if (!opts.includes(this.form.posicionamento)) {
         this.form.posicionamento = opts[0] || '';
+      }
+      // Reset BM quando muda para Google (não é usado)
+      if (val === 'Google') {
+        this.form.bm = '';
+      }
+      // Reset posicionamento quando muda para Facebook (não é usado)
+      if (val === 'Facebook') {
+        this.form.posicionamento = '';
       }
     }
   }

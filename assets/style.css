@@ -41,4 +41,75 @@ input:checked + .slider{background:var(--primary-600)}
 input:checked + .slider:before{transform:translateX(18px)}
 .hint{color:var(--danger);margin:0}
 
+/* Tooltip styles */
+.field-with-tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tooltip-icon {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--muted);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: bold;
+  cursor: help;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.tooltip-icon:hover {
+  background: var(--text);
+  transform: scale(1.1);
+}
+
+.tooltip-content {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 200px;
+  max-width: 300px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  margin-bottom: 8px;
+}
+
+.tooltip-content::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border);
+}
+
+.tooltip-content.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.field-with-tooltip.active .tooltip-content {
+  opacity: 1;
+  visibility: visible;
+}
+
 

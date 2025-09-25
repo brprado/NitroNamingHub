@@ -17,7 +17,7 @@
     <header class="header">
       <img src="assets/logo.png" alt="Logo do sistema" style="display:block;margin:0 auto;max-height:80px;width:auto;"/>
       <br><br>
-      <p  class="subtitle">Padronize nomes de campanhas (Google/YouTube) com segurança e consistência.</p>
+      <p  class="subtitle">Padronize nomes de campanhas (Google/Facebook) com segurança e consistência.</p>
     </header>
 
     <nav class="tabs">
@@ -30,26 +30,51 @@
         <h2 class="card-title">Configuração</h2>
         <form class="form" @submit.prevent>
           <div class="field two-col">
-            <label for="siglaGestor">Sigla do Gestor</label>
+            <label for="siglaGestor" class="field-with-tooltip">
+              Sigla do Gestor
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Identificação do gestor responsável pela campanha (ex: LP, JB, RL, Z)</span>
+            </label>
             <input id="siglaGestor" type="text" v-model.trim="form.siglaGestor" @input="enforceUpper('siglaGestor')" placeholder="LP, JB..." maxlength="6" autocomplete="off">
           </div>
 
           <div class="field two-col">
-            <label for="rede">Rede</label>
+            <label for="rede" class="field-with-tooltip">
+              Rede
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Plataforma de tráfego onde a campanha será veiculada (Google ou Facebook)</span>
+            </label>
             <select id="rede" v-model="form.rede">
               <option v-for="opt in redes" :key="opt" :value="opt">{{ opt }}</option>
             </select>
           </div>
 
-          <div class="field two-col">
-            <label for="posicionamento">Posicionamento</label>
+          <div class="field two-col" v-if="form.rede === 'Google'">
+            <label for="posicionamento" class="field-with-tooltip">
+              Posicionamento
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Tipo de posicionamento no Google: YT (YouTube), Display ou Search</span>
+            </label>
             <select id="posicionamento" v-model="form.posicionamento">
               <option v-for="opt in posicionamentosOptions" :key="opt" :value="opt">{{ opt }}</option>
             </select>
           </div>
 
+          <div class="field two-col" v-if="form.rede === 'Facebook'">
+            <label for="bm" class="field-with-tooltip">
+              BM
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Business Manager - identificação da conta de negócios do Facebook</span>
+            </label>
+            <input id="bm" type="text" v-model.trim="form.bm" @input="enforceUpperKeepSpaces('bm')" placeholder="DIDA" maxlength="20" autocomplete="off">
+          </div>
+
           <div class="field two-col">
-            <label for="pais">País</label>
+            <label for="pais" class="field-with-tooltip">
+              País
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">País de destino da campanha (USA, BR)</span>
+            </label>
             <select id="pais" v-model="form.pais">
               <option value="USA">USA</option>
               <option value="BR">BR</option>
@@ -57,66 +82,70 @@
           </div>
 
           <div class="field two-col">
-            <label for="estrutura">Estrutura</label>
-            <input id="estrutura" type="text" v-model.trim="form.estrutura" @input="enforceUpperKeepSpaces('estrutura')" placeholder="1-1-1" maxlength="12" autocomplete="off">
+            <label for="estrutura" class="field-with-tooltip">
+              Estrutura
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Estrutura da campanha - selecione uma das opções predefinidas</span>
+            </label>
+            <select id="estrutura" v-model="form.estrutura">
+              <option value="">Selecione uma estrutura</option>
+              <option value="1-1-1">1-1-1</option>
+              <option value="1-3-1">1-3-1</option>
+              <option value="1-5-1">1-5-1</option>
+              <option value="1-1-4">1-1-4</option>
+              <option value="1-1-5">1-1-5</option>
+            </select>
           </div>
 
-          <div class="field two-col">
-            <label for="levaAd">Leva do AD</label>
-            <input id="levaAd" type="text" v-model.trim="form.levaAd" @input="enforceUpperKeepSpaces('levaAd')" placeholder="LEVA 01" maxlength="12" autocomplete="off">
-          </div>
 
           <div class="field two-col">
-            <label for="dataDiaUm">Data do dia 1</label>
+            <label for="dataDiaUm" class="field-with-tooltip">
+              Data do dia 1
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Data do primeiro dia da campanha (formato: dd/mm/yyyy)</span>
+            </label>
             <input id="dataDiaUm" type="date" v-model="form.dataDiaUmRaw" autocomplete="off">
           </div>
 
           <div class="field two-col">
-            <label for="oferta">Oferta (código)</label>
+            <label for="oferta" class="field-with-tooltip">
+              Oferta (código)
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Código da oferta promocionada (ex: BD04, BP02, BP03)</span>
+            </label>
             <input id="oferta" type="text" v-model.trim="form.oferta" @input="enforceUpper('oferta')" placeholder="BD04, BP02..." maxlength="8" autocomplete="off">
           </div>
 
           <div class="field two-col">
-            <label for="bm">BM</label>
-            <input id="bm" type="text" v-model.trim="form.bm" @input="enforceUpperKeepSpaces('bm')" placeholder="DIDA" maxlength="20" autocomplete="off">
-          </div>
-
-          <div class="field two-col">
-            <label for="ca">CA</label>
+            <label for="ca" class="field-with-tooltip">
+              CA
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Creative Agency - agência criativa responsável (ex: CA01, NEXUS)</span>
+            </label>
             <input id="ca" type="text" v-model.trim="form.ca" @input="enforceUpperKeepSpaces('ca')" placeholder="CA01" maxlength="10" autocomplete="off">
           </div>
 
           
 
           <div class="field two-col">
-            <label for="nomeCampanha">Nome da Campanha</label>
+            <label for="nomeCampanha" class="field-with-tooltip">
+              Nome da Campanha
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Nome identificador da campanha (ex: ASHE 01, CAMPAIGN 02)</span>
+            </label>
             <input id="nomeCampanha" type="text" v-model.trim="form.nomeCampanha" @input="enforceUpperKeepSpaces('nomeCampanha')" placeholder="ASHE 01" maxlength="30" autocomplete="off">
           </div>
 
           <div class="field two-col">
-            <label for="adNumCampaign">AD</label>
-            <input id="adNumCampaign" type="number" min="0" max="99" v-model.number="form.adNumCampaign" @input="padVsl('adNumCampaign')" placeholder="12">
+            <label for="adNumCampaign" class="field-with-tooltip">
+              AD
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Número do anúncio (0-99) - será formatado como AD01, AD12, etc.</span>
+            </label>
+            <input id="adNumCampaign" type="number" min="0" max="99" v-model.number="form.adNumCampaign" @input="padNumber('adNumCampaign')" placeholder="12">
           </div>
 
-          <div class="field two-col">
-            <label for="presell">Presell (código)</label>
-            <input id="presell" type="text" v-model.trim="form.presell" @input="enforceUpper('presell')" placeholder="PS01, PREL03" maxlength="8" autocomplete="off">
-          </div>
 
-          <div class="field vsl-group">
-            <div>
-              <label for="vsl">VSL</label>
-              <input id="vsl" type="number" min="0" max="99" v-model.number="form.vsl" @input="padVsl('vsl')" placeholder="01">
-            </div>
-            <div>
-              <label for="ml">ML</label>
-              <input id="ml" type="number" min="0" max="99" v-model.number="form.ml" @input="padVsl('ml')" placeholder="01">
-            </div>
-            <div>
-              <label for="l">L</label>
-              <input id="l" type="number" min="0" max="99" v-model.number="form.l" @input="padVsl('l')" placeholder="01">
-            </div>
-          </div>
 
           <div class="field inline">
             <label class="switch">
@@ -140,10 +169,16 @@
         </div>
 
         <div class="helper">
-          <h3>Template (NitroCampaign)</h3>
+          <h3>Templates (NitroCampaign)</h3>
           <p>Separador: <strong>-</strong></p>
-          <p>Formato: <strong>[GESTOR] - [REDE DE TRÁFEGO] - [BM] - [CA] - [OFERTA] - [PAÍS] - [AD] - [LEVA DO AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]</strong></p>
-          <p>Exemplo: <em>[RL] - [FB] - [DIDA - CA01] - [BP03] - [USA] - [AD12] - [LEVA 01] - [1-1-1] - [ASHE 01] - [17/09]</em></p>
+          
+          <h4>Facebook:</h4>
+          <p>Formato: <strong>[GESTOR] - [REDE DE TRÁFEGO] - [BM] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]</strong></p>
+          <p>Exemplo: <em>[RL] - [FB] - [DIDA] - [CA01] - [BP03] - [US] - [AD12] - [1-1-1] - [ASHE 01] - [17/09/2024]</em></p>
+          
+          <h4>Google:</h4>
+          <p>Formato: <strong>[GESTOR] - [REDE DE TRÁFEGO] - [POSICIONAMENTO] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]</strong></p>
+          <p>Exemplo: <em>[Z] - [Google] - [YT] - [NEXUS] - [BP03] - [US] - [AD12] - [1-1-1] - [ASHE 01] - [17/09/2024]</em></p>
         </div>
       </section>
     </main>
@@ -153,29 +188,49 @@
         <h2 class="card-title">Configuração de Anúncio</h2>
         <form class="form" @submit.prevent>
           <div class="field two-col">
-            <label for="copy">Copy</label>
+            <label for="copy" class="field-with-tooltip">
+              Copy
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Tipo de copy/versão do anúncio (ex: MG, H1, V2)</span>
+            </label>
             <input id="copy" type="text" v-model.trim="formAds.copy" @input="enforceUpperAds('copy')" placeholder="MG, H1..." maxlength="20" autocomplete="off">
           </div>
 
           <div class="field two-col">
-            <label for="redeTrafego">Rede de Tráfego</label>
+            <label for="redeTrafego" class="field-with-tooltip">
+              Rede de Tráfego
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Plataforma onde o anúncio será veiculado (Facebook ou Google)</span>
+            </label>
             <select id="redeTrafego" v-model="formAds.redeTrafego">
-              <option v-for="opt in redeTrafegoOpts" :key="opt.value" :value="opt.value">{{ opt.label }} - {{ opt.value }}</option>
+              <option v-for="opt in redeTrafegoOpts" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
             </select>
           </div>
 
           <div class="field two-col">
-            <label for="ofertaAd">Oferta</label>
+            <label for="ofertaAd" class="field-with-tooltip">
+              Oferta
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Código da oferta promocionada (ex: BP02, BD04)</span>
+            </label>
             <input id="ofertaAd" type="text" v-model.trim="formAds.oferta" @input="enforceUpperAds('oferta')" placeholder="BP02..." maxlength="12" autocomplete="off">
           </div>
 
           <div class="field two-col">
-            <label for="adNum">AD</label>
+            <label for="adNum" class="field-with-tooltip">
+              AD
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Número do anúncio (0-99) - será formatado como AD01, AD12, etc.</span>
+            </label>
             <input id="adNum" type="number" min="0" max="99" v-model.number="formAds.adNum" @input="padAd('adNum')" placeholder="12">
           </div>
 
           <div class="field two-col">
-            <label for="editor">Editor (opcional)</label>
+            <label for="editor" class="field-with-tooltip">
+              Editor
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Editor responsável pelo anúncio (ex: MB, LP) - Campo obrigatório</span>
+            </label>
             <input id="editor" type="text" v-model.trim="formAds.editor" @input="enforceUpperAds('editor')" placeholder="MB, LP..." maxlength="12" autocomplete="off">
           </div>
 
@@ -210,18 +265,6 @@
       </section>
     </main>
 
-    <footer class="footer">
-      <details>
-        <summary>Manual rápido de uso</summary>
-        <ol>
-          <li>Selecione a <strong>Rede</strong> e o <strong>Posicionamento</strong>.</li>
-          <li>Preencha códigos em <strong>MAIÚSCULAS</strong> (ex.: BD04, PS01).</li>
-          <li>Evite caracteres proibidos: <code>| ; : / \ [ ] { }</code>.</li>
-          <li>Use os campos VSL/ML/L para formar <code>VSL01.ML01.L01</code>.</li>
-          <li>Desative o toggle para remover <strong>[colchetes]</strong> se desejar.</li>
-        </ol>
-      </details>
-    </footer>
   </div>
 
   <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
