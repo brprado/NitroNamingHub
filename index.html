@@ -15,6 +15,13 @@
   <div id="pageRoot">
   <div id="app" class="container">
     <header class="header">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <div></div>
+        <div class="theme-toggle" @click="toggleTheme" :class="{ active: isDarkMode }">
+          <div class="theme-toggle-icon sun">☀️</div>
+          <div class="theme-toggle-icon moon">🌙</div>
+        </div>
+      </div>
       <img src="assets/logo.png" alt="Logo do sistema" style="display:block;margin:0 auto;max-height:80px;width:auto;"/>
       <br><br>
       <p  class="subtitle">Padronize nomes de campanhas (Google/Facebook) com segurança e consistência.</p>

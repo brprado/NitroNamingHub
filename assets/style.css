@@ -1,4 +1,32 @@
-:root{--bg:#0b0d10;--bg-elev:#111418;--border:#1b2026;--text:#e6e8eb;--muted:#98a2b3;--primary:#6ee7b7;--primary-600:#34d399;--danger:#ef4444}
+/* Tema Dark (padrão) */
+:root {
+  --bg: #0b0d10;
+  --bg-elev: #111418;
+  --border: #1b2026;
+  --text: #e6e8eb;
+  --muted: #98a2b3;
+  --primary: #6ee7b7;
+  --primary-600: #34d399;
+  --danger: #ef4444;
+  --toggle-bg: #232a32;
+  --toggle-active: #34d399;
+  --toggle-inactive: #6b7280;
+}
+
+/* Tema Light */
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-elev: #f8fafc;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --muted: #64748b;
+  --primary: #059669;
+  --primary-600: #047857;
+  --danger: #dc2626;
+  --toggle-bg: #e2e8f0;
+  --toggle-active: #059669;
+  --toggle-inactive: #94a3b8;
+}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0}
 body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow:hidden}
@@ -15,7 +43,7 @@ body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,
 .vsl-group{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .field.inline{flex-direction:row;align-items:center;gap:10px}
 label{font-size:12px;color:var(--muted)}
-input,select{background:#0f1317;border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;outline:none;transition:border-color .15s ease}
+input,select{background:var(--bg-elev);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:8px;outline:none;transition:border-color .15s ease}
 input:focus,select:focus{border-color:var(--primary)}
 .preview{border:1px dashed var(--border);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:12px}
 .preview.invalid{border-color:rgba(239,68,68,.6)}
@@ -31,14 +59,84 @@ input:focus,select:focus{border-color:var(--primary)}
 #pageRoot{min-height:100vh;width:100vw;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-bottom:48px}
 
 .tabs{display:flex;gap:8px;margin:8px 0 16px}
-.tabs button{background:#10151a;color:var(--text);border:1px solid var(--border);padding:8px 12px;border-radius:8px;cursor:pointer}
+.tabs button{background:var(--bg-elev);color:var(--text);border:1px solid var(--border);padding:8px 12px;border-radius:8px;cursor:pointer}
 .tabs button.active{border-color:var(--primary);box-shadow:0 0 0 2px rgba(110,231,183,.15) inset}
 .switch{position:relative;display:inline-block;width:42px;height:24px}
 .switch input{opacity:0;width:0;height:0}
-.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:#232a32;transition:.2s;border-radius:999px;border:1px solid var(--border)}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background:var(--toggle-bg);transition:.2s;border-radius:999px;border:1px solid var(--border)}
 .slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:2px;background:white;transition:.2s;border-radius:50%}
 input:checked + .slider{background:var(--primary-600)}
 input:checked + .slider:before{transform:translateX(18px)}
+
+/* Toggle de tema estilizado */
+.theme-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 3px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 60px;
+  height: 32px;
+}
+
+.theme-toggle:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(110, 231, 183, 0.15);
+  transform: scale(1.05);
+}
+
+.theme-toggle-icon {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  z-index: 2;
+}
+
+.theme-toggle-icon.sun {
+  left: 3px;
+  top: 3px;
+  background: var(--toggle-inactive);
+  color: var(--bg);
+  opacity: 0.7;
+}
+
+.theme-toggle-icon.moon {
+  right: 3px;
+  top: 3px;
+  background: var(--toggle-inactive);
+  color: var(--bg);
+  opacity: 0.7;
+}
+
+.theme-toggle.active .theme-toggle-icon.moon {
+  opacity: 1;
+  background: var(--primary);
+  transform: scale(1.1);
+}
+
+.theme-toggle.active .theme-toggle-icon.sun {
+  opacity: 0.3;
+}
+
+.theme-toggle:not(.active) .theme-toggle-icon.moon {
+  opacity: 0.3;
+}
+
+.theme-toggle:not(.active) .theme-toggle-icon.sun {
+  opacity: 1;
+  background: var(--primary);
+  transform: scale(1.1);
+}
 .hint{color:var(--danger);margin:0}
 
 /* Tooltip styles */

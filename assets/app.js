@@ -7,6 +7,7 @@ createApp({
   data() {
     return {
       activeTab: 'campanhas',
+      isDarkMode: true, // Começa no modo dark
       redes: ["Google", "Facebook"],
       posicionamentos: ["YT", "Display", "Search"],
       redeTrafegoOpts: [
@@ -228,13 +229,51 @@ createApp({
       document.querySelectorAll('.field-with-tooltip.active').forEach(el => {
         el.classList.remove('active');
       });
+    },
+    toggleTheme() {
+      this.isDarkMode = !this.isDarkMode;
+      this.applyTheme();
+      // Salva a preferência no localStorage
+      localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
+    },
+    applyTheme() {
+      const html = document.documentElement;
+      if (this.isDarkMode) {
+        html.removeAttribute('data-theme');
+      } else {
+        html.setAttribute('data-theme', 'light');
+      }
+    },
+    loadTheme() {
+      // Carrega a preferência salva no localStorage
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        this.isDarkMode = false;
+      } else if (savedTheme === 'dark') {
+        this.isDarkMode = true;
+      } else {
+        // Se não há preferência salva, detecta a preferência do sistema
+        this.isDarkMode = !window.matchMedia('(prefers-color-scheme: light)').matches;
+      }
+      this.applyTheme();
     }
   },
   mounted() {
+    // Carrega o tema salvo ou detecta a preferência do sistema
+    this.loadTheme();
+    
     // Adiciona event listener para cliques fora dos tooltips
     document.addEventListener('click', (event) => {
       if (!event.target.closest('.field-with-tooltip')) {
         this.hideAllTooltips();
+      }
+    });
+
+    // Escuta mudanças na preferência de tema do sistema
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        this.isDarkMode = !e.matches;
+        this.applyTheme();
       }
     });
   },
