@@ -38,11 +38,17 @@
         <form class="form" @submit.prevent>
           <div class="field two-col">
             <label for="siglaGestor" class="field-with-tooltip">
-              Sigla do Gestor
+              Gestor
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Identificação do gestor responsável pela campanha (ex: LP, JB, RL, Z)</span>
+              <span class="tooltip-content">Identificação do gestor responsável pela campanha (ex: ZO, RL, FS, LP)</span>
             </label>
-            <input id="siglaGestor" type="text" v-model.trim="form.siglaGestor" @input="enforceUpper('siglaGestor')" placeholder="LP, JB..." maxlength="6" autocomplete="off">
+            <select id="siglaGestor" v-model="form.siglaGestor">
+              <option value="">Selecione o gestor</option>
+              <option value="ZO">Zoio</option>
+              <option value="RL">Rafael Lima</option>
+              <option value="FS">Fernando Bandeira</option>
+              <option value="LP">Lucas Petersen</option>
+            </select>
           </div>
 
           <div class="field two-col">
@@ -198,9 +204,15 @@
             <label for="copy" class="field-with-tooltip">
               Copy
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Tipo de copy/versão do anúncio (ex: MG, H1, V2)</span>
+              <span class="tooltip-content">Tipo de copy/versão do anúncio (ex: MG, AN, AC, MC)</span>
             </label>
-            <input id="copy" type="text" v-model.trim="formAds.copy" @input="enforceUpperAds('copy')" placeholder="MG, H1..." maxlength="20" autocomplete="off">
+            <select id="copy" v-model="formAds.copy">
+              <option value="">Selecione o copy</option>
+              <option value="MG">Matheus Ganguilhet</option>
+              <option value="AN">Antônio</option>
+              <option value="AC">André Victor</option>
+              <option value="MC">Maria Candida</option>
+            </select>
           </div>
 
           <div class="field two-col">
@@ -236,9 +248,17 @@
             <label for="editor" class="field-with-tooltip">
               Editor
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Editor responsável pelo anúncio (ex: MB, LP) - Campo obrigatório</span>
+              <span class="tooltip-content">Editor responsável pelo anúncio (ex: AH, CB, LA, IC, DM, MB) - Campo obrigatório</span>
             </label>
-            <input id="editor" type="text" v-model.trim="formAds.editor" @input="enforceUpperAds('editor')" placeholder="MB, LP..." maxlength="12" autocomplete="off">
+            <select id="editor" v-model="formAds.editor">
+              <option value="">Selecione o editor</option>
+              <option value="AH">Alexandre Husky</option>
+              <option value="CB">Cris Berriel</option>
+              <option value="LA">Lucas Andreli</option>
+              <option value="IC">Isabela Barreto</option>
+              <option value="DM">Douglas Marcelino</option>
+              <option value="MB">Matheus Boturi</option>
+            </select>
           </div>
 
           <div class="field inline">
