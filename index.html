@@ -14,7 +14,7 @@
 <body>
   <div id="pageRoot">
   <div id="app" class="container">
-    <header class="header">
+    <header class="header animate-fade-in-up">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <div></div>
         <div class="theme-toggle" @click="toggleTheme" :class="{ active: isDarkMode }">
@@ -27,7 +27,7 @@
       <p  class="subtitle">Padronize nomes de campanhas (Google/Facebook) com segurança e consistência.</p>
     </header>
 
-    <nav class="tabs">
+    <nav class="tabs animate-slide-in-right">
       <button :class="{ active: activeTab==='campanhas' }" @click="activeTab='campanhas'">Campanhas</button>
       <button :class="{ active: activeTab==='anuncios' }" @click="activeTab='anuncios'">Anúncios</button>
     </nav>

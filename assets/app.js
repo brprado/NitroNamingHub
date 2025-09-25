@@ -192,21 +192,23 @@ createApp({
     async copyToClipboard() {
       try {
         await navigator.clipboard.writeText(this.preview);
+        this.showToast("Texto copiado com sucesso!");
         this.copied = true;
         setTimeout(() => (this.copied = false), 1500);
       } catch (e) {
         console.error(e);
-        alert("Não foi possível copiar para a área de transferência.");
+        this.showToast("Erro ao copiar texto", "error");
       }
     },
     async copyAds() {
       try {
         await navigator.clipboard.writeText(this.previewAds);
+        this.showToast("Texto copiado com sucesso!");
         this.copied = true;
         setTimeout(() => (this.copied = false), 1500);
       } catch (e) {
         console.error(e);
-        alert("Não foi possível copiar para a área de transferência.");
+        this.showToast("Erro ao copiar texto", "error");
       }
     },
     toggleTooltip(event) {
@@ -256,6 +258,34 @@ createApp({
         this.isDarkMode = !window.matchMedia('(prefers-color-scheme: light)').matches;
       }
       this.applyTheme();
+    },
+    showToast(message, type = "success") {
+      // Remove toast existente se houver
+      const existingToast = document.querySelector('.toast');
+      if (existingToast) {
+        existingToast.remove();
+      }
+      
+      // Cria novo toast
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.textContent = message;
+      
+      if (type === "error") {
+        toast.style.background = 'var(--danger)';
+        toast.style.setProperty('--toast-icon', '❌');
+      }
+      
+      document.body.appendChild(toast);
+      
+      // Mostra o toast
+      setTimeout(() => toast.classList.add('show'), 100);
+      
+      // Remove o toast após 3 segundos
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
     }
   },
   mounted() {
