@@ -56,13 +56,20 @@ createApp({
       }
       
       const noProhibited = !PROHIBITED_TEST.test(combined);
-      const adOk = Number.isInteger(Number(this.form.adNumCampaign)) && Number(this.form.adNumCampaign) >= 0 && Number(this.form.adNumCampaign) <= 99;
+      const adOk = Number(this.form.adNumCampaign) >= 0;
       return Boolean(requiredFilled && noProhibited && adOk);
     },
     // Preview Campanhas conforme especificação
     preview() {
       const sep = " - ";
-      const p2 = (n) => String(n ?? 0).padStart(2, "0");
+      const p2 = (n) => {
+        const num = Number(n ?? 0);
+        if (Number.isInteger(num)) {
+          return String(num).padStart(2, "0");
+        } else {
+          return String(num);
+        }
+      };
       const adToken = `AD${p2(this.form.adNumCampaign)}`;
       const withToken = (value) => {
         const val = value ?? "";
@@ -120,11 +127,18 @@ createApp({
       const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.editor && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
       const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.editor}`;
       const noProhibited = !PROHIBITED_TEST.test(combined);
-      const adOk = Number.isInteger(Number(this.formAds.adNum)) && Number(this.formAds.adNum) >= 0 && Number(this.formAds.adNum) <= 99;
+      const adOk = Number(this.formAds.adNum) >= 0;
       return Boolean(requiredFilled && noProhibited && adOk);
     },
     previewAds() {
-      const p2 = (n) => String(n ?? 0).padStart(2, "0");
+      const p2 = (n) => {
+        const num = Number(n ?? 0);
+        if (Number.isInteger(num)) {
+          return String(num).padStart(2, "0");
+        } else {
+          return String(num);
+        }
+      };
       const adToken = `AD${p2(this.formAds.adNum)}`;
       const withToken = (value) => {
         const val = value ?? "";
@@ -172,7 +186,7 @@ createApp({
     padNumber(field) {
       let value = Number(this.form[field] ?? 0);
       if (Number.isNaN(value)) value = 0;
-      value = Math.max(0, Math.min(99, Math.trunc(value)));
+      value = Math.max(0, value);
       this.form[field] = value;
     },
     enforceUpperAds(field) {
@@ -186,7 +200,7 @@ createApp({
     padAd(field) {
       let value = Number(this.formAds[field] ?? 0);
       if (Number.isNaN(value)) value = 0;
-      value = Math.max(0, Math.min(99, Math.trunc(value)));
+      value = Math.max(0, value);
       this.formAds[field] = value;
     },
     async copyToClipboard() {

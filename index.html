@@ -144,18 +144,18 @@
             <label for="nomeCampanha" class="field-with-tooltip">
               Nome da Campanha
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Nome identificador da campanha (ex: ASHE 01, CAMPAIGN 02)</span>
+              <span class="tooltip-content">Nome identificador da campanha (ex: ASHE01, CAMPAIGN02)</span>
             </label>
-            <input id="nomeCampanha" type="text" v-model.trim="form.nomeCampanha" @input="enforceUpperKeepSpaces('nomeCampanha')" placeholder="ASHE 01" maxlength="30" autocomplete="off">
+            <input id="nomeCampanha" type="text" v-model.trim="form.nomeCampanha" @input="enforceUpper('nomeCampanha')" placeholder="ASHE01" maxlength="30" autocomplete="off">
           </div>
 
           <div class="field two-col">
             <label for="adNumCampaign" class="field-with-tooltip">
               AD
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Número do anúncio (0-99) - será formatado como AD01, AD12, etc.</span>
+              <span class="tooltip-content">Número do anúncio - será formatado como AD01, AD12, etc.</span>
             </label>
-            <input id="adNumCampaign" type="number" min="0" max="99" v-model.number="form.adNumCampaign" @input="padNumber('adNumCampaign')" placeholder="12">
+            <input id="adNumCampaign" type="number" min="0" step="any" v-model.number="form.adNumCampaign" @input="padNumber('adNumCampaign')" placeholder="12">
           </div>
 
 
@@ -239,9 +239,9 @@
             <label for="adNum" class="field-with-tooltip">
               AD
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Número do anúncio (0-99) - será formatado como AD01, AD12, etc.</span>
+              <span class="tooltip-content">Número do anúncio - será formatado como AD01, AD12, etc.</span>
             </label>
-            <input id="adNum" type="number" min="0" max="99" v-model.number="formAds.adNum" @input="padAd('adNum')" placeholder="12">
+            <input id="adNum" type="number" min="0" step="any" v-model.number="formAds.adNum" @input="padAd('adNum')" placeholder="12">
           </div>
 
           <div class="field two-col">
