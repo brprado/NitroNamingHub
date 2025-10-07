@@ -287,10 +287,10 @@
             <label for="editor" class="field-with-tooltip">
               Editor
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Editor responsável pelo anúncio (ex: AH, CB, LA, IC, DM, MB) - Campo obrigatório</span>
+              <span class="tooltip-content">Editor responsável pelo anúncio (ex: AH, CB, LA, IC, DM, MB) - Se não informado, será usado 'XX'</span>
             </label>
             <select id="editor" v-model="formAds.editor">
-              <option value="">Selecione o editor</option>
+              <option value="">Não informado (XX)</option>
               <option value="AH">Alexandre Husky</option>
               <option value="CB">Cris Berriel</option>
               <option value="LA">Lucas Andreli</option>

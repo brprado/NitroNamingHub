@@ -128,7 +128,7 @@ createApp({
       return this.posicionamentos;
     },
     isValidAds() {
-      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.variacao && this.formAds.hook && this.formAds.avatar && this.formAds.editor && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
+      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.variacao && this.formAds.hook && this.formAds.avatar && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
       const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.variacao}${this.formAds.hook}${this.formAds.avatar}${this.formAds.editor}`;
       const noProhibited = !PROHIBITED_TEST.test(combined);
       const adOk = Number(this.formAds.adNum) >= 0;
@@ -151,6 +151,7 @@ createApp({
       
       // Padrão: [COPY][REDE][OFERTA][AD][Variacao][Hook][Avatar.S/F][EDITOR]
       const avatarComplete = this.formAds.avatar ? `${this.formAds.avatar}.${this.formAds.avatarTipo}` : "";
+      const editorValue = this.formAds.editor || "XX"; // Se não informado, usa 'XX'
       
       const parts = [
         withToken((this.formAds.copy || "").toUpperCase()),
@@ -160,7 +161,7 @@ createApp({
         withToken((this.formAds.variacao || "").toUpperCase()),
         withToken((this.formAds.hook || "").toUpperCase()),
         withToken(avatarComplete.toUpperCase()),
-        withToken((this.formAds.editor || "").toUpperCase()),
+        withToken(editorValue.toUpperCase()),
       ];
       
       return parts.join(" - ");
