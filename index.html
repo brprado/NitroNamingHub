@@ -245,6 +245,45 @@
           </div>
 
           <div class="field two-col">
+            <label for="variacao" class="field-with-tooltip">
+              Variação
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Variação do anúncio (ex: V1, V2, V3) - Campo alfanumérico obrigatório</span>
+            </label>
+            <input id="variacao" type="text" v-model.trim="formAds.variacao" @input="enforceUpperAds('variacao')" placeholder="V1" maxlength="10" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="hook" class="field-with-tooltip">
+              Hook
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Hook do anúncio (ex: H01, H02, H03) - Campo alfanumérico obrigatório</span>
+            </label>
+            <input id="hook" type="text" v-model.trim="formAds.hook" @input="enforceUpperAds('hook')" placeholder="H01" maxlength="10" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="avatar" class="field-with-tooltip">
+              Avatar
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Avatar do anúncio (ex: A01, A02, A03) - Campo alfanumérico obrigatório</span>
+            </label>
+            <input id="avatar" type="text" v-model.trim="formAds.avatar" @input="enforceUpperAds('avatar')" placeholder="A02" maxlength="10" autocomplete="off">
+          </div>
+
+          <div class="field two-col">
+            <label for="avatarTipo" class="field-with-tooltip">
+              Tipo de Avatar
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">S = Avatar não famoso | F = Avatar famoso</span>
+            </label>
+            <select id="avatarTipo" v-model="formAds.avatarTipo">
+              <option value="S">S (Não Famoso)</option>
+              <option value="F">F (Famoso)</option>
+            </select>
+          </div>
+
+          <div class="field two-col">
             <label for="editor" class="field-with-tooltip">
               Editor
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
@@ -283,11 +322,12 @@
         </div>
 
         <div class="helper">
-          <h3>Template de Anúncio</h3>
-          <p>Base: <strong>[Copy][Rede de Tráfego][Oferta][AD]</strong></p>
-          <p>Exemplo: <em>[MG][FB][BP02][AD12]</em></p>
-          <p style="margin-top:8px">Sugestão com editor: <strong>[Copy] - [Rede de tráfego] - [Oferta] - [AD] - [Editor]</strong></p>
-          <p>Exemplo: <em>[MG] - [FB] - [BP02] - [AD12] - [MB]</em></p>
+          <h3>Template de Anúncio (Novo Padrão)</h3>
+          <p>Formato: <strong>[COPY] - [REDE] - [OFERTA] - [AD] - [Variacao] - [Hook] - [Avatar.S/F] - [EDITOR]</strong></p>
+          <p>Exemplo: <em>[AN] - [FB] - [BP03] - [AD11] - [V1] - [H01] - [A02.S] - [MB]</em></p>
+          <p style="margin-top:8px"><strong>Legenda Avatar:</strong></p>
+          <p>• <strong>.S</strong> = Avatar não famoso</p>
+          <p>• <strong>.F</strong> = Avatar famoso</p>
         </div>
       </section>
     </main>

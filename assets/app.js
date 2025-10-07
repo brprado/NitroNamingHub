@@ -34,6 +34,10 @@ createApp({
         redeTrafego: "FB",
         oferta: "",
         adNum: 0,
+        variacao: "",
+        hook: "",
+        avatar: "",
+        avatarTipo: "S", // S = não famoso, F = famoso
         editor: "",
       },
       copied: false,
@@ -124,8 +128,8 @@ createApp({
       return this.posicionamentos;
     },
     isValidAds() {
-      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.editor && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
-      const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.editor}`;
+      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.variacao && this.formAds.hook && this.formAds.avatar && this.formAds.editor && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
+      const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.variacao}${this.formAds.hook}${this.formAds.avatar}${this.formAds.editor}`;
       const noProhibited = !PROHIBITED_TEST.test(combined);
       const adOk = Number(this.formAds.adNum) >= 0;
       return Boolean(requiredFilled && noProhibited && adOk);
@@ -144,18 +148,22 @@ createApp({
         const val = value ?? "";
         return this.showBrackets ? (val ? `[${val}]` : "") : val;
       };
+      
+      // Padrão: [COPY][REDE][OFERTA][AD][Variacao][Hook][Avatar.S/F][EDITOR]
+      const avatarComplete = this.formAds.avatar ? `${this.formAds.avatar}.${this.formAds.avatarTipo}` : "";
+      
       const parts = [
         withToken((this.formAds.copy || "").toUpperCase()),
         withToken((this.formAds.redeTrafego || "").toUpperCase()),
         withToken((this.formAds.oferta || "").toUpperCase()),
         withToken(adToken),
+        withToken((this.formAds.variacao || "").toUpperCase()),
+        withToken((this.formAds.hook || "").toUpperCase()),
+        withToken(avatarComplete.toUpperCase()),
+        withToken((this.formAds.editor || "").toUpperCase()),
       ];
-      const base = parts.join(" - ");
-      const editor = (this.formAds.editor || "").toUpperCase();
-      if (editor) {
-        return this.showBrackets ? `${base} - [${editor}]` : `${base} - ${editor}`;
-      }
-      return base;
+      
+      return parts.join(" - ");
     },
   },
   methods: {
