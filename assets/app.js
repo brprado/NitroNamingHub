@@ -153,9 +153,12 @@ createApp({
       const avatarComplete = this.formAds.avatar ? `${this.formAds.avatar}.${this.formAds.avatarTipo}` : "";
       const editorValue = this.formAds.editor || "XX"; // Se não informado, usa 'XX'
       
+      // Mapear Google para YT na pré-visualização, mantendo outras redes inalteradas
+      const redeDisplay = this.formAds.redeTrafego === "Google" ? "YT" : (this.formAds.redeTrafego || "");
+      
       const parts = [
         withToken((this.formAds.copy || "").toUpperCase()),
-        withToken((this.formAds.redeTrafego || "").toUpperCase()),
+        withToken(redeDisplay.toUpperCase()),
         withToken((this.formAds.oferta || "").toUpperCase()),
         withToken(adToken),
         withToken((this.formAds.variacao || "").toUpperCase()),
