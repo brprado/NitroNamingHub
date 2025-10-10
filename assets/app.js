@@ -27,13 +27,14 @@ createApp({
         bm: "",
         ca: "",
         nomeCampanha: "",
-        adNumCampaign: 0,
+        adNumCampaign: "",
       },
       formAds: {
+        sequencia: null,
         copy: "",
         redeTrafego: "FB",
         oferta: "",
-        adNum: 0,
+        adNum: "",
         variacao: "",
         hook: "",
         avatar: "",
@@ -60,24 +61,20 @@ createApp({
       }
       
       const noProhibited = !PROHIBITED_TEST.test(combined);
-      const adOk = Number(this.form.adNumCampaign) >= 0;
+      const adOk = this.form.adNumCampaign && this.form.adNumCampaign.trim().length > 0;
       return Boolean(requiredFilled && noProhibited && adOk);
     },
     // Preview Campanhas conforme especificação
     preview() {
-      const sep = " - ";
-      const p2 = (n) => {
-        const num = Number(n ?? 0);
-        if (Number.isInteger(num)) {
-          return String(num).padStart(2, "0");
-        } else {
-          return String(num);
-        }
+      // Função para limpar espaços e hífens
+      const cleanValue = (value) => {
+        return String(value || "").replace(/[\s-]/g, "").toUpperCase();
       };
-      const adToken = `AD${p2(this.form.adNumCampaign)}`;
+      
+      const adToken = cleanValue(this.form.adNumCampaign);
       const withToken = (value) => {
-        const val = value ?? "";
-        return this.showBrackets ? (val ? `[${val}]` : "") : val;
+        const val = cleanValue(value);
+        return val ? `[${val}]` : "";
       };
       const formatDate = (iso) => {
         if (!iso) return "";
@@ -88,35 +85,35 @@ createApp({
       
       // Determina o formato baseado na rede
       if (this.form.rede === 'Facebook') {
-        // Padrão Facebook: [GESTOR] - [REDE DE TRÁFEGO] - [BM] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]
+        // Padrão Facebook: [GESTOR][REDE DE TRÁFEGO][BM][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]
         const parts = [
-          withToken((this.form.siglaGestor || "").toUpperCase()), // [GESTOR]
-          withToken("FB"),                                         // [REDE DE TRÁFEGO] - sempre FB para Facebook
-          withToken((this.form.bm || "").toUpperCase()),           // [BM]
-          withToken((this.form.ca || "").toUpperCase()),           // [CA]
-          withToken((this.form.oferta || "").toUpperCase()),       // [OFERTA]
-          withToken((this.form.pais || "").toUpperCase()),         // [PAÍS]
-          withToken(adToken),                                      // [AD]
-          withToken((this.form.estrutura || "").toUpperCase()),    // [ESTRUTURA]
-          withToken((this.form.nomeCampanha || "").toUpperCase()), // [NOME DA CAMPANHA]
-          withToken(formatDate(this.form.dataDiaUmRaw)),           // [DATA DO DIA 1]
+          withToken(this.form.siglaGestor), // [GESTOR]
+          withToken("FB"),                  // [REDE DE TRÁFEGO] - sempre FB para Facebook
+          withToken(this.form.bm),          // [BM]
+          withToken(this.form.ca),          // [CA]
+          withToken(this.form.oferta),      // [OFERTA]
+          withToken(this.form.pais),        // [PAÍS]
+          withToken(adToken),               // [AD]
+          withToken(this.form.estrutura),   // [ESTRUTURA]
+          withToken(this.form.nomeCampanha), // [NOME DA CAMPANHA]
+          withToken(formatDate(this.form.dataDiaUmRaw)), // [DATA DO DIA 1]
         ];
-        return parts.join(sep);
+        return parts.join("");
       } else {
-        // Padrão Google: [GESTOR] - [REDE DE TRÁFEGO] - [POSICIONAMENTO] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]
+        // Padrão Google: [GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]
         const parts = [
-          withToken((this.form.siglaGestor || "").toUpperCase()), // [GESTOR]
-          withToken("Google"),                                     // [REDE DE TRÁFEGO] - sempre Google
-          withToken((this.form.posicionamento || "").toUpperCase()), // [POSICIONAMENTO]
-          withToken((this.form.ca || "").toUpperCase()),           // [CA]
-          withToken((this.form.oferta || "").toUpperCase()),       // [OFERTA]
-          withToken((this.form.pais || "").toUpperCase()),         // [PAÍS]
-          withToken(adToken),                                      // [AD]
-          withToken((this.form.estrutura || "").toUpperCase()),    // [ESTRUTURA]
-          withToken((this.form.nomeCampanha || "").toUpperCase()), // [NOME DA CAMPANHA]
-          withToken(formatDate(this.form.dataDiaUmRaw)),           // [DATA DO DIA 1]
+          withToken(this.form.siglaGestor), // [GESTOR]
+          withToken("Google"),              // [REDE DE TRÁFEGO] - sempre Google
+          withToken(this.form.posicionamento), // [POSICIONAMENTO]
+          withToken(this.form.ca),          // [CA]
+          withToken(this.form.oferta),      // [OFERTA]
+          withToken(this.form.pais),        // [PAÍS]
+          withToken(adToken),               // [AD]
+          withToken(this.form.estrutura),   // [ESTRUTURA]
+          withToken(this.form.nomeCampanha), // [NOME DA CAMPANHA]
+          withToken(formatDate(this.form.dataDiaUmRaw)), // [DATA DO DIA 1]
         ];
-        return parts.join(sep);
+        return parts.join("");
       }
     },
     posicionamentosOptions() {
@@ -128,46 +125,46 @@ createApp({
       return this.posicionamentos;
     },
     isValidAds() {
-      const requiredFilled = this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.variacao && this.formAds.hook && this.formAds.avatar && (this.formAds.adNum !== null && this.formAds.adNum !== undefined);
-      const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.variacao}${this.formAds.hook}${this.formAds.avatar}${this.formAds.editor}`;
+      const requiredFilled = this.formAds.sequencia !== null && this.formAds.sequencia !== undefined && this.formAds.copy && this.formAds.redeTrafego && this.formAds.oferta && this.formAds.adNum && this.formAds.variacao && this.formAds.hook && this.formAds.avatar;
+      const combined = `${this.formAds.copy}${this.formAds.redeTrafego}${this.formAds.oferta}${this.formAds.adNum}${this.formAds.variacao}${this.formAds.hook}${this.formAds.avatar}${this.formAds.editor}`;
       const noProhibited = !PROHIBITED_TEST.test(combined);
-      const adOk = Number(this.formAds.adNum) >= 0;
-      return Boolean(requiredFilled && noProhibited && adOk);
+      const sequenciaOk = this.formAds.sequencia !== null && this.formAds.sequencia !== undefined && !isNaN(Number(this.formAds.sequencia));
+      const adOk = this.formAds.adNum && this.formAds.adNum.trim().length > 0;
+      return Boolean(requiredFilled && noProhibited && sequenciaOk && adOk);
     },
     previewAds() {
-      const p2 = (n) => {
-        const num = Number(n ?? 0);
-        if (Number.isInteger(num)) {
-          return String(num).padStart(2, "0");
-        } else {
-          return String(num);
-        }
-      };
-      const adToken = `AD${p2(this.formAds.adNum)}`;
-      const withToken = (value) => {
-        const val = value ?? "";
-        return this.showBrackets ? (val ? `[${val}]` : "") : val;
+      // Função para limpar espaços e hífens
+      const cleanValue = (value) => {
+        return String(value || "").replace(/[\s-]/g, "").toUpperCase();
       };
       
-      // Padrão: [COPY][REDE][OFERTA][AD][Variacao][Hook][Avatar.S/F][EDITOR]
-      const avatarComplete = this.formAds.avatar ? `${this.formAds.avatar}.${this.formAds.avatarTipo}` : "";
-      const editorValue = this.formAds.editor || "XX"; // Se não informado, usa 'XX'
+      const withToken = (value) => {
+        const val = cleanValue(value);
+        return val ? `[${val}]` : "";
+      };
+      
+      // Novo formato: [NÚMERO SEQUENCIAL][COPY][REDE][OFERTA][AD][V][H][A.S][EDITOR]
+      const sequenciaValue = this.formAds.sequencia !== null && this.formAds.sequencia !== undefined ? String(this.formAds.sequencia) : "";
+      const avatarComplete = this.formAds.avatar ? `${cleanValue(this.formAds.avatar)}.${this.formAds.avatarTipo}` : "";
+      const editorValue = cleanValue(this.formAds.editor) || "XX"; // Se não informado, usa 'XX'
       
       // Mapear Google para YT na pré-visualização, mantendo outras redes inalteradas
       const redeDisplay = this.formAds.redeTrafego === "Google" ? "YT" : (this.formAds.redeTrafego || "");
       
+      // Cada campo com seus próprios colchetes
       const parts = [
-        withToken((this.formAds.copy || "").toUpperCase()),
-        withToken(redeDisplay.toUpperCase()),
-        withToken((this.formAds.oferta || "").toUpperCase()),
-        withToken(adToken),
-        withToken((this.formAds.variacao || "").toUpperCase()),
-        withToken((this.formAds.hook || "").toUpperCase()),
-        withToken(avatarComplete.toUpperCase()),
-        withToken(editorValue.toUpperCase()),
+        withToken(sequenciaValue),           // [NÚMERO SEQUENCIAL]
+        withToken(this.formAds.copy),        // [COPY]
+        withToken(redeDisplay),              // [REDE]
+        withToken(this.formAds.oferta),      // [OFERTA]
+        withToken(this.formAds.adNum),       // [AD]
+        withToken(this.formAds.variacao),    // [V]
+        withToken(this.formAds.hook),        // [H]
+        withToken(avatarComplete),           // [A.S]
+        withToken(editorValue),              // [EDITOR]
       ];
       
-      return parts.join(" - ");
+      return parts.join("");
     },
   },
   methods: {
@@ -195,12 +192,6 @@ createApp({
         .toUpperCase();
       this.form[field] = sanitized;
     },
-    padNumber(field) {
-      let value = Number(this.form[field] ?? 0);
-      if (Number.isNaN(value)) value = 0;
-      value = Math.max(0, value);
-      this.form[field] = value;
-    },
     enforceUpperAds(field) {
       const current = this.formAds[field] ?? "";
       const sanitized = String(current)
@@ -208,12 +199,6 @@ createApp({
         .replace(PROHIBITED_REGEX, "")
         .toUpperCase();
       this.formAds[field] = sanitized;
-    },
-    padAd(field) {
-      let value = Number(this.formAds[field] ?? 0);
-      if (Number.isNaN(value)) value = 0;
-      value = Math.max(0, value);
-      this.formAds[field] = value;
     },
     async copyToClipboard() {
       try {

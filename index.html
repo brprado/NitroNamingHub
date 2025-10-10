@@ -153,20 +153,13 @@
             <label for="adNumCampaign" class="field-with-tooltip">
               AD
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Número do anúncio - será formatado como AD01, AD12, etc.</span>
+              <span class="tooltip-content">Código do anúncio - aceita letras e números (ex: AD1, AD11, ADFB76)</span>
             </label>
-            <input id="adNumCampaign" type="number" min="0" step="any" v-model.number="form.adNumCampaign" @input="padNumber('adNumCampaign')" placeholder="12">
+            <input id="adNumCampaign" type="text" v-model.trim="form.adNumCampaign" @input="enforceUpper('adNumCampaign')" placeholder="AD11" maxlength="20" autocomplete="off">
           </div>
 
 
 
-          <div class="field inline">
-            <label class="switch">
-              <input type="checkbox" v-model="showBrackets">
-              <span class="slider"></span>
-            </label>
-            <span>Aplicar Colchetes []</span>
-          </div>
         </form>
       </section>
 
@@ -183,15 +176,18 @@
 
         <div class="helper">
           <h3>Templates (NitroCampaign)</h3>
-          <p>Separador: <strong>-</strong></p>
           
           <h4>Facebook:</h4>
-          <p>Formato: <strong>[GESTOR] - [REDE DE TRÁFEGO] - [BM] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]</strong></p>
-          <p>Exemplo: <em>[RL] - [FB] - [DIDA] - [CA01] - [BP03] - [US] - [AD12] - [1-1-1] - [ASHE 01] - [17/09/2024]</em></p>
+          <p>Formato: <strong>[GESTOR][REDE DE TRÁFEGO][BM][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]</strong></p>
+          <p>Exemplo: <em>[RL][FB][DIDA][CA01][BP03][US][AD12][111][ASHE01][17/09/2024]</em></p>
           
           <h4>Google:</h4>
-          <p>Formato: <strong>[GESTOR] - [REDE DE TRÁFEGO] - [POSICIONAMENTO] - [CA] - [OFERTA] - [PAÍS] - [AD] - [ESTRUTURA] - [NOME DA CAMPANHA] - [DATA DO DIA 1 DA CAMPANHA]</strong></p>
-          <p>Exemplo: <em>[Z] - [Google] - [YT] - [NEXUS] - [BP03] - [US] - [AD12] - [1-1-1] - [ASHE 01] - [17/09/2024]</em></p>
+          <p>Formato: <strong>[GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]</strong></p>
+          <p>Exemplo: <em>[Z][Google][YT][NEXUS][BP03][US][AD12][111][ASHE01][17/09/2024]</em></p>
+          
+          <p style="margin-top:8px"><strong>Observações:</strong></p>
+          <p>• O sistema remove automaticamente espaços e hífens antes de gerar o nome final</p>
+          <p>• Colchetes são sempre aplicados automaticamente</p>
         </div>
       </section>
     </main>
@@ -200,6 +196,15 @@
       <section class="card">
         <h2 class="card-title">Configuração de Anúncio</h2>
         <form class="form" @submit.prevent>
+          <div class="field two-col">
+            <label for="sequencia" class="field-with-tooltip">
+              Sequência
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Número sequencial do anúncio - aceita qualquer valor numérico (ex: 1, 1000, 100000.12345)</span>
+            </label>
+            <input id="sequencia" type="number" step="any" v-model.number="formAds.sequencia" placeholder="325" autocomplete="off">
+          </div>
+
           <div class="field two-col">
             <label for="copy" class="field-with-tooltip">
               Copy
@@ -239,9 +244,9 @@
             <label for="adNum" class="field-with-tooltip">
               AD
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Número do anúncio - será formatado como AD01, AD12, etc.</span>
+              <span class="tooltip-content">Código do anúncio - aceita letras e números (ex: AD1, AD11, ADFB76)</span>
             </label>
-            <input id="adNum" type="number" min="0" step="any" v-model.number="formAds.adNum" @input="padAd('adNum')" placeholder="12">
+            <input id="adNum" type="text" v-model.trim="formAds.adNum" @input="enforceUpperAds('adNum')" placeholder="AD11" maxlength="20" autocomplete="off">
           </div>
 
           <div class="field two-col">
@@ -299,14 +304,6 @@
               <option value="MB">Matheus Boturi</option>
             </select>
           </div>
-
-          <div class="field inline">
-            <label class="switch">
-              <input type="checkbox" v-model="showBrackets">
-              <span class="slider"></span>
-            </label>
-            <span>Aplicar Colchetes []</span>
-          </div>
         </form>
       </section>
 
@@ -323,11 +320,15 @@
 
         <div class="helper">
           <h3>Template de Anúncio (Novo Padrão)</h3>
-          <p>Formato: <strong>[COPY] - [REDE] - [OFERTA] - [AD] - [Variacao] - [Hook] - [Avatar.S/F] - [EDITOR]</strong></p>
-          <p>Exemplo: <em>[AN] - [FB] - [BP03] - [AD11] - [V1] - [H01] - [A02.S] - [MB]</em></p>
+          <p>Formato: <strong>[NÚMERO SEQUENCIAL][COPY][REDE][OFERTA][AD][V][H][A.S][EDITOR]</strong></p>
+          <p>Exemplo: <em>[325][AN][FB][BP03][AD11][V1][H01][A02.S][MB]</em></p>
           <p style="margin-top:8px"><strong>Legenda Avatar:</strong></p>
           <p>• <strong>.S</strong> = Avatar não famoso</p>
           <p>• <strong>.F</strong> = Avatar famoso</p>
+          <p style="margin-top:8px"><strong>Observações:</strong></p>
+          <p>• O sistema remove automaticamente espaços e hífens antes de gerar o nome final</p>
+          <p>• Campo AD aceita letras e números (ex: AD1, AD11, ADFB76)</p>
+          <p>• Campo Sequência aceita qualquer valor numérico (ex: 1, 1000, 100000.12345)</p>
         </div>
       </section>
     </main>
