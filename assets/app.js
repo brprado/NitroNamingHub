@@ -52,11 +52,11 @@ createApp({
       
       if (this.form.rede === 'Facebook') {
         // Facebook: BM é obrigatório, posicionamento não
-        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.bm && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha;
+        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.bm && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha && this.form.dataDiaUmRaw;
         combined = `${this.form.siglaGestor}${this.form.bm}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
       } else {
         // Google: Posicionamento é obrigatório, BM não
-        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.posicionamento && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha;
+        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.posicionamento && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha && this.form.dataDiaUmRaw;
         combined = `${this.form.siglaGestor}${this.form.posicionamento}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
       }
       
@@ -71,9 +71,19 @@ createApp({
         return String(value || "").replace(/[\s-]/g, "").toUpperCase();
       };
       
+      // Função especial para estrutura que preserva hífens
+      const cleanValueKeepHyphens = (value) => {
+        return String(value || "").replace(/\s/g, "").toUpperCase();
+      };
+      
       const adToken = cleanValue(this.form.adNumCampaign);
       const withToken = (value) => {
         const val = cleanValue(value);
+        return val ? `[${val}]` : "";
+      };
+      
+      const withTokenKeepHyphens = (value) => {
+        const val = cleanValueKeepHyphens(value);
         return val ? `[${val}]` : "";
       };
       const formatDate = (iso) => {
@@ -94,7 +104,7 @@ createApp({
           withToken(this.form.oferta),      // [OFERTA]
           withToken(this.form.pais),        // [PAÍS]
           withToken(adToken),               // [AD]
-          withToken(this.form.estrutura),   // [ESTRUTURA]
+          withTokenKeepHyphens(this.form.estrutura),   // [ESTRUTURA]
           withToken(this.form.nomeCampanha), // [NOME DA CAMPANHA]
           withToken(formatDate(this.form.dataDiaUmRaw)), // [DATA DO DIA 1]
         ];
@@ -109,7 +119,7 @@ createApp({
           withToken(this.form.oferta),      // [OFERTA]
           withToken(this.form.pais),        // [PAÍS]
           withToken(adToken),               // [AD]
-          withToken(this.form.estrutura),   // [ESTRUTURA]
+          withTokenKeepHyphens(this.form.estrutura),   // [ESTRUTURA]
           withToken(this.form.nomeCampanha), // [NOME DA CAMPANHA]
           withToken(formatDate(this.form.dataDiaUmRaw)), // [DATA DO DIA 1]
         ];
@@ -316,6 +326,42 @@ createApp({
         this.isDarkMode = !e.matches;
         this.applyTheme();
       }
+    });
+
+    // Desabilita menu de contexto (clique direito) na pré-visualização
+    document.addEventListener('contextmenu', (event) => {
+      if (event.target.closest('.preview-text')) {
+        event.preventDefault();
+        return false;
+      }
+    });
+
+    // Desabilita atalhos de teclado (Ctrl+C, Ctrl+A, etc.) na pré-visualização
+    document.addEventListener('keydown', (event) => {
+      // Verifica se o foco está na área de pré-visualização ou se o elemento ativo é a pré-visualização
+      const previewElement = event.target.closest('.preview-text') || document.activeElement.closest('.preview-text');
+      
+      if (previewElement) {
+        // Desabilita Ctrl+C, Ctrl+A, Ctrl+X, Ctrl+V
+        if (event.ctrlKey && (event.key === 'c' || event.key === 'a' || event.key === 'x' || event.key === 'v')) {
+          event.preventDefault();
+          event.stopPropagation();
+          return false;
+        }
+        // Desabilita F12 (DevTools)
+        if (event.key === 'F12') {
+          event.preventDefault();
+          return false;
+        }
+      }
+    });
+
+    // Adiciona tabindex para tornar a pré-visualização focável e capturar eventos de teclado
+    this.$nextTick(() => {
+      const previewElements = document.querySelectorAll('.preview-text');
+      previewElements.forEach(element => {
+        element.setAttribute('tabindex', '0');
+      });
     });
   },
   watch: {

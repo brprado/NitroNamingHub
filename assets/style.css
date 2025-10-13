@@ -203,6 +203,14 @@ input:hover,select:hover{
   border-radius: 8px;
   border: 1px solid var(--border);
   transition: all 0.3s ease;
+  /* Desabilita seleção de texto */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  /* Desabilita menu de contexto */
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .preview-text:hover {
