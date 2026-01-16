@@ -50,6 +50,7 @@
               <option value="LP">Lucas Petersen</option>
               <option value="EP">Edvaldo Paletta</option>
               <option value="RB">Rhuan Briolli</option>
+              <option value="MP">Matheus Petersen</option>
             </select>
           </div>
 
@@ -69,6 +70,17 @@
               Posicionamento
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
               <span class="tooltip-content">Tipo de posicionamento no Google: YT (YouTube), Display ou Search</span>
+            </label>
+            <select id="posicionamento" v-model="form.posicionamento">
+              <option v-for="opt in posicionamentosOptions" :key="opt" :value="opt">{{ opt }}</option>
+            </select>
+          </div>
+
+          <div class="field two-col" v-if="form.rede === 'TikTok'">
+            <label for="posicionamento" class="field-with-tooltip">
+              Posicionamento
+              <span class="tooltip-icon" @click="toggleTooltip">?</span>
+              <span class="tooltip-content">Tipo de posicionamento no TikTok</span>
             </label>
             <select id="posicionamento" v-model="form.posicionamento">
               <option v-for="opt in posicionamentosOptions" :key="opt" :value="opt">{{ opt }}</option>
@@ -186,6 +198,10 @@
           <h4>Google:</h4>
           <p>Formato: <strong>[GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]</strong></p>
           <p>Exemplo: <em>[Z][Google][YT][NEXUS][BP03][US][AD12][111][ASHE01][17/09/2024]</em></p>
+          
+          <h4>TikTok:</h4>
+          <p>Formato: <strong>[GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]</strong></p>
+          <p>Exemplo: <em>[RL][TTK][FEED_PERFIL][CA01][BP03][US][AD12][111][ASHE01][17/09/2024]</em></p>
           
           <p style="margin-top:8px"><strong>Observações:</strong></p>
           <p>• O sistema remove automaticamente espaços e hífens antes de gerar o nome final</p>
