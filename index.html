@@ -50,7 +50,6 @@
               <option value="LP">Lucas Petersen</option>
               <option value="EP">Edvaldo Paletta</option>
               <option value="RB">Rhuan Briolli</option>
-              <option value="MP">Matheus Petersen</option>
             </select>
           </div>
 
@@ -58,7 +57,7 @@
             <label for="rede" class="field-with-tooltip">
               Rede
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Plataforma de tráfego onde a campanha será veiculada (Google ou Facebook)</span>
+              <span class="tooltip-content">Plataforma de tráfego onde a campanha será veiculada (Google, Facebook ou TikTok)</span>
             </label>
             <select id="rede" v-model="form.rede">
               <option v-for="opt in redes" :key="opt" :value="opt">{{ opt }}</option>
@@ -77,13 +76,13 @@
           </div>
 
           <div class="field two-col" v-if="form.rede === 'TikTok'">
-            <label for="posicionamento" class="field-with-tooltip">
+            <label for="posicionamentoTtk" class="field-with-tooltip">
               Posicionamento
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Tipo de posicionamento no TikTok</span>
+              <span class="tooltip-content">Para TikTok o posicionamento é sempre N/A</span>
             </label>
-            <select id="posicionamento" v-model="form.posicionamento">
-              <option v-for="opt in posicionamentosOptions" :key="opt" :value="opt">{{ opt }}</option>
+            <select id="posicionamentoTtk" v-model="form.posicionamento" disabled>
+              <option value="N/A">N/A</option>
             </select>
           </div>
 
@@ -199,10 +198,6 @@
           <p>Formato: <strong>[GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]</strong></p>
           <p>Exemplo: <em>[Z][Google][YT][NEXUS][BP03][US][AD12][111][ASHE01][17/09/2024]</em></p>
           
-          <h4>TikTok:</h4>
-          <p>Formato: <strong>[GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]</strong></p>
-          <p>Exemplo: <em>[RL][TTK][FEED_PERFIL][CA01][BP03][US][AD12][111][ASHE01][17/09/2024]</em></p>
-          
           <p style="margin-top:8px"><strong>Observações:</strong></p>
           <p>• O sistema remove automaticamente espaços e hífens antes de gerar o nome final</p>
           <p>• Colchetes são sempre aplicados automaticamente</p>
@@ -242,7 +237,7 @@
             <label for="redeTrafego" class="field-with-tooltip">
               Rede de Tráfego
               <span class="tooltip-icon" @click="toggleTooltip">?</span>
-              <span class="tooltip-content">Plataforma onde o anúncio será veiculado (Facebook ou Google)</span>
+              <span class="tooltip-content">Plataforma onde o anúncio será veiculado (Facebook, Google ou TikTok)</span>
             </label>
             <select id="redeTrafego" v-model="formAds.redeTrafego">
               <option v-for="opt in redeTrafegoOpts" :key="opt.value" :value="opt.value">{{ opt.label }}</option>

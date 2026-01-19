@@ -10,15 +10,6 @@ createApp({
       isDarkMode: true, // Começa no modo dark
       redes: ["Google", "Facebook", "TikTok"],
       posicionamentos: ["YT", "Display", "Search"],
-      posicionamentosTikTok: [
-        { label: "Feed do perfil", value: "FEED_PERFIL" },
-        { label: "Feed Seguindo", value: "FEED_SEGUINDO" },
-        { label: "TikTok Lite", value: "TTK_LITE" },
-        { label: "TikTok para web", value: "TTK_WEB" },
-        { label: "Feed de pesquisa", value: "FEED_PESQUISA" },
-        { label: "Página de resultados da busca", value: "RESULTADO_BUSCA" },
-        { label: "Lemon8", value: "LEMON8" },
-      ],
       redeTrafegoOpts: [
         { label: 'Facebook', value: 'FB' },
         { label: 'Google', value: 'Google' },
@@ -64,14 +55,14 @@ createApp({
         // Facebook: BM é obrigatório, posicionamento não
         requiredFilled = this.form.siglaGestor && this.form.rede && this.form.bm && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha && this.form.dataDiaUmRaw;
         combined = `${this.form.siglaGestor}${this.form.bm}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
-      } else if (this.form.rede === 'TikTok') {
-        // TikTok: Posicionamento é obrigatório, BM não
-        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.posicionamento && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha && this.form.dataDiaUmRaw;
-        combined = `${this.form.siglaGestor}${this.form.posicionamento}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
-      } else {
+      } else if (this.form.rede === 'Google') {
         // Google: Posicionamento é obrigatório, BM não
         requiredFilled = this.form.siglaGestor && this.form.rede && this.form.posicionamento && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha && this.form.dataDiaUmRaw;
         combined = `${this.form.siglaGestor}${this.form.posicionamento}${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
+      } else if (this.form.rede === 'TikTok') {
+        // TikTok: não exige preenchimento manual de posicionamento (fixo N/A)
+        requiredFilled = this.form.siglaGestor && this.form.rede && this.form.ca && this.form.oferta && this.form.pais && this.form.nomeCampanha && this.form.dataDiaUmRaw;
+        combined = `${this.form.siglaGestor}TTK${this.form.ca}${this.form.oferta}${this.form.pais}${this.form.nomeCampanha}`;
       }
       
       const noProhibited = !PROHIBITED_TEST.test(combined);
@@ -123,15 +114,12 @@ createApp({
           withToken(formatDate(this.form.dataDiaUmRaw)), // [DATA DO DIA 1]
         ];
         return parts.join("");
-      } else if (this.form.rede === 'TikTok') {
-        // Padrão TikTok: [GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]
-        // Converte o label do posicionamento para o value na nomenclatura
-        const tiktokPos = this.posicionamentosTikTok.find(p => p.label === this.form.posicionamento);
-        const posicionamentoValue = tiktokPos ? tiktokPos.value : this.form.posicionamento;
+      } else if (this.form.rede === 'Google') {
+        // Padrão Google: [GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]
         const parts = [
           withToken(this.form.siglaGestor), // [GESTOR]
-          withToken("TTK"),                 // [REDE DE TRÁFEGO] - sempre TTK para TikTok
-          withToken(posicionamentoValue),   // [POSICIONAMENTO] - usa o value, não o label
+          withToken("Google"),              // [REDE DE TRÁFEGO] - sempre Google
+          withToken(this.form.posicionamento), // [POSICIONAMENTO]
           withToken(this.form.ca),          // [CA]
           withToken(this.form.oferta),      // [OFERTA]
           withToken(this.form.pais),        // [PAÍS]
@@ -141,12 +129,12 @@ createApp({
           withToken(formatDate(this.form.dataDiaUmRaw)), // [DATA DO DIA 1]
         ];
         return parts.join("");
-      } else {
-        // Padrão Google: [GESTOR][REDE DE TRÁFEGO][POSICIONAMENTO][CA][OFERTA][PAÍS][AD][ESTRUTURA][NOME DA CAMPANHA][DATA DO DIA 1 DA CAMPANHA]
+      } else if (this.form.rede === 'TikTok') {
+        // Padrão TikTok: POSICIONAMENTO fixo N/A (não vem do formulário)
         const parts = [
           withToken(this.form.siglaGestor), // [GESTOR]
-          withToken("Google"),              // [REDE DE TRÁFEGO] - sempre Google
-          withToken(this.form.posicionamento), // [POSICIONAMENTO]
+          withToken("TTK"),                 // [REDE DE TRÁFEGO]
+          withToken("N/A"),                 // [POSICIONAMENTO] fixo N/A
           withToken(this.form.ca),          // [CA]
           withToken(this.form.oferta),      // [OFERTA]
           withToken(this.form.pais),        // [PAÍS]
@@ -163,8 +151,8 @@ createApp({
         // Facebook não tem posicionamento, retorna array vazio
         return [];
       } else if (this.form.rede === 'TikTok') {
-        // TikTok tem posicionamentos específicos
-        return this.posicionamentosTikTok.map(p => p.label);
+        // TikTok: posicionamento fixo N/A, não há opções para o usuário
+        return ["N/A"];
       }
       // Google tem posicionamento: YT, Display, Search
       return this.posicionamentos;
@@ -194,7 +182,6 @@ createApp({
       const editorValue = cleanValue(this.formAds.editor) || "XX"; // Se não informado, usa 'XX'
       
       // Mapear Google para YT na pré-visualização, mantendo outras redes inalteradas
-      // TTK já vem como valor, não precisa mapear
       const redeDisplay = this.formAds.redeTrafego === "Google" ? "YT" : (this.formAds.redeTrafego || "");
       
       // Cada campo com seus próprios colchetes
@@ -403,21 +390,20 @@ createApp({
   watch: {
     'form.rede'(val) {
       const opts = this.posicionamentosOptions;
-      if (val === 'TikTok') {
-        // Para TikTok, reseta o posicionamento se não for válido
-        if (!opts.includes(this.form.posicionamento)) {
-          this.form.posicionamento = opts[0] || '';
-        }
+      if (!opts.includes(this.form.posicionamento)) {
+        this.form.posicionamento = opts[0] || '';
+      }
+      // Reset BM quando muda para Google (não é usado)
+      if (val === 'Google') {
         this.form.bm = '';
-      } else if (val === 'Google') {
-        // Reset BM quando muda para Google (não é usado)
-        this.form.bm = '';
-        if (!opts.includes(this.form.posicionamento)) {
-          this.form.posicionamento = opts[0] || '';
-        }
-      } else if (val === 'Facebook') {
-        // Reset posicionamento quando muda para Facebook (não é usado)
+      }
+      // Reset posicionamento quando muda para Facebook (não é usado)
+      if (val === 'Facebook') {
         this.form.posicionamento = '';
+      }
+      // Quando rede for TikTok, força posicionamento N/A
+      if (val === 'TikTok') {
+        this.form.posicionamento = 'N/A';
       }
     }
   }
